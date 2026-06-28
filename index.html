@@ -80,6 +80,39 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 
 .game-board { display: none; }
 .game-board.active { display: block; }
+
+/* ===== GAME LAYOUT — 3-Column Desktop, Flexible Mobile ===== */
+.game-layout { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
+.main-board { display: flex; flex-direction: column; gap: 1rem; }
+.opponent-sidebar { display: none; background: var(--md-surface); border: 1px solid var(--md-border); border-radius: 8px; padding: 1.25rem; }
+
+@media (min-width: 1024px) {
+  .game-layout { grid-template-columns: minmax(200px, 280px) 1fr; gap: 1.5rem; }
+  .opponent-sidebar { display: block; }
+}
+
+.sidebar-header { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--md-gold-lt); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--md-border); }
+.sidebar-player-name { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--md-gold-lt); margin: 0 0 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.sidebar-payoff { margin-bottom: 1.25rem; }
+.sidebar-payoff-label { font-size: 0.7rem; color: var(--md-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+.sidebar-payoff-count { font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 600; color: var(--md-gold); }
+.sidebar-discards { margin-top: 1rem; }
+.sidebar-discard-label { font-size: 0.7rem; color: var(--md-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.sidebar-discard-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--md-panel); border-radius: 4px; margin-bottom: 0.4rem; font-size: 0.85rem; }
+.sidebar-discard-pile-num { color: var(--md-muted); }
+.sidebar-discard-top-card { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: var(--md-gold-lt); }
+.sidebar-discard-top-card.is-king { color: var(--md-gold); }
+.sidebar-discard-empty { color: var(--md-gold-dk); opacity: 0.5; }
+.sidebar-hand { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--md-border); }
+.sidebar-hand-label { font-size: 0.7rem; color: var(--md-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+.sidebar-hand-count { font-size: 0.85rem; color: var(--md-muted); }
+
+/* Mobile sidebar toggle */
+@media (max-width: 1023px) {
+  .opponent-sidebar { display: none; position: fixed; inset: 0; z-index: 150; background: var(--md-dark); border: none; border-radius: 0; padding: 1.5rem; overflow-y: auto; }
+  .opponent-sidebar.visible { display: block; }
+  .opponent-sidebar-close { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--md-gold-lt); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+}
 .game-header { text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--md-border); }
 .game-title { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 900; color: var(--md-gold-lt); margin: 0; letter-spacing: 0.05em; }
 .turn-indicator { color: var(--md-gold); font-size: 0.9rem; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
@@ -294,28 +327,36 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
   </div>
 
   <div class="game-board" id="gameBoard">
-    <div class="game-header">
-      <div class="game-title">Spite & Malice</div>
-      <div class="turn-indicator" id="turnIndicator"></div>
+    <div class="game-layout">
+      <!-- Opponent Sidebar (left on desktop, expandable on mobile) -->
+      <div class="opponent-sidebar" id="opponentSidebar"></div>
+
+      <!-- Main Game Board -->
+      <div class="main-board">
+        <div class="game-header">
+          <div class="game-title">Spite & Malice</div>
+          <div class="turn-indicator" id="turnIndicator"></div>
+        </div>
+        <div class="refill-notice" id="refillNotice">✦ Hand emptied mid-turn — 5 new cards dealt! Keep playing.</div>
+        <div class="complete-notice" id="completeNotice">♦ Pile completed (A→Q) — cards reshuffled into the reservoir!</div>
+        <div class="selection-info" id="selInfo">Select a card to play</div>
+        <div class="center-section">
+          <div class="center-label">Center Piles</div>
+          <div class="center-instruction" id="centerInstr"></div>
+          <div class="center-piles" id="centerPiles"></div>
+          <div class="reservoir-count" id="reservoirCount"></div>
+          <div class="rules-note">★ King is wild — can be played on ANY center pile, acting as whatever card that pile needs next</div>
+        </div>
+        <div class="players-section" id="playersSection"></div>
+        <div class="player-nav-bar" id="playerNavBar"></div>
+        <div class="controls">
+          <button class="btn" onclick="G.clearSel()" id="clearBtn" style="display:none">Clear Selection</button>
+          <button class="btn btn-secondary" onclick="S.showSetup()">New Game</button>
+        </div>
+        <div class="status-message" id="statusMsg"></div>
+        <div class="ornament">✦</div>
+      </div>
     </div>
-    <div class="refill-notice" id="refillNotice">✦ Hand emptied mid-turn — 5 new cards dealt! Keep playing.</div>
-    <div class="complete-notice" id="completeNotice">♦ Pile completed (A→Q) — cards reshuffled into the reservoir!</div>
-    <div class="selection-info" id="selInfo">Select a card to play</div>
-    <div class="center-section">
-      <div class="center-label">Center Piles</div>
-      <div class="center-instruction" id="centerInstr"></div>
-      <div class="center-piles" id="centerPiles"></div>
-      <div class="reservoir-count" id="reservoirCount"></div>
-      <div class="rules-note">★ King is wild — can be played on ANY center pile, acting as whatever card that pile needs next</div>
-    </div>
-    <div class="players-section" id="playersSection"></div>
-    <div class="player-nav-bar" id="playerNavBar"></div>
-    <div class="controls">
-      <button class="btn" onclick="G.clearSel()" id="clearBtn" style="display:none">Clear Selection</button>
-      <button class="btn btn-secondary" onclick="S.showSetup()">New Game</button>
-    </div>
-    <div class="status-message" id="statusMsg"></div>
-    <div class="ornament">✦</div>
   </div>
 </div>
 
@@ -944,6 +985,9 @@ const G = {
     // Render main player panel (full view of selected player)
     this.renderMainPlayerPanel();
 
+    // Render opponent sidebar (compact opponent layout on desktop)
+    this.renderOpponentSidebar();
+
     document.getElementById('turnIndicator').textContent =
       this.gameOver ? `Game Over — ${this.players[this.winnerIdx].name} Wins` : `${this.players[this.cur].name}'s Turn`;
     document.getElementById('clearBtn').style.display = (this.sel && !this.gameOver) ? 'block' : 'none';
@@ -965,6 +1009,64 @@ const G = {
     }).join('');
     document.getElementById('playerNavBar').innerHTML = navHTML;
     document.getElementById('playerNavBar').classList.add('active');
+  },
+
+  selectPlayerPanel(idx) {
+    this.selectedPlayerIdx = idx;
+    this.renderInner();
+  },
+
+  renderOpponentSidebar() {
+    // Render compact opponent layout in sidebar (payoff + top of each discard)
+    // Find the opponent (any player that isn't the local human)
+    const localSeat = this.localSeat();
+    const opponents = this.players.filter((_, idx) => idx !== localSeat);
+    
+    if (opponents.length === 0) {
+      document.getElementById('opponentSidebar').innerHTML = '';
+      return;
+    }
+
+    // For now, show the first opponent (primary opponent)
+    // TODO: For 3+ players, could cycle or show multiple
+    const opp = opponents[0];
+    const oppIdx = this.players.indexOf(opp);
+
+    const sidebarHTML = `
+      <div class="sidebar-header">Opponent</div>
+      <h3 class="sidebar-player-name">${opp.name}</h3>
+      
+      <div class="sidebar-payoff">
+        <div class="sidebar-payoff-label">Payoff Stack</div>
+        <div class="sidebar-payoff-count">${opp.payoff.length}</div>
+      </div>
+
+      <div class="sidebar-discards">
+        <div class="sidebar-discard-label">Discard Piles</div>
+        ${opp.discards.map((pile, i) => {
+          const topCard = pile.length ? pile[pile.length - 1] : null;
+          return `
+            <div class="sidebar-discard-item">
+              <span class="sidebar-discard-pile-num">Pile ${i+1}</span>
+              <span class="sidebar-discard-top-card ${topCard && topCard.isKing ? 'is-king' : ''}">
+                ${topCard ? topCard.str : '—'}
+              </span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <div class="sidebar-hand">
+        <div class="sidebar-hand-label">Hand (Hidden)</div>
+        <div class="sidebar-hand-count">${opp.hand ? opp.hand.length : opp.handCount} cards</div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="G.selectPlayerPanel(${oppIdx})" style="margin-top:1rem;width:100%;font-size:0.75rem;padding:0.6rem">
+        View Full Layout
+      </button>
+    `;
+
+    document.getElementById('opponentSidebar').innerHTML = sidebarHTML;
   },
 
   selectPlayerPanel(idx) {
