@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Spite & Malice — Help & Rules</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --md-black: #0a0906;
+  --md-dark: #110e09;
+  --md-surface: #1a1610;
+  --md-panel: #211c14;
+  --md-border: #2c2619;
+  --md-border-lt: #3d3526;
+  --md-gold-dk: #7a5815;
+  --md-gold: #c9943c;
+  --md-gold-lt: #e8c87a;
+  --md-cream: #f0e6ce;
+  --md-muted: #7a6d58;
+  --md-success: #4caf7a;
+  --md-danger: #c94c4c;
+  --md-radius: 4px;
+  --md-radius-lg: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--md-dark);
+  color: var(--md-cream);
+  font-family: 'Raleway', sans-serif;
+  margin: 0;
+  line-height: 1.65;
+}
+
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+
+/* ---- Header ---- */
+.top-ornament { text-align: center; color: var(--md-gold-dk); font-size: 1.2rem; margin-bottom: 1rem; }
+
+header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--md-gold-lt);
+  text-align: center;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--md-gold-dk);
+  margin-bottom: 2rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--md-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--md-gold-lt); }
+
+/* ---- Table of contents ---- */
+.toc {
+  background: var(--md-surface);
+  border: 1px solid var(--md-border);
+  border-radius: var(--md-radius-lg);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 3rem;
+}
+.toc h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--md-gold-dk);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 1rem;
+}
+.toc ol {
+  margin: 0;
+  padding-left: 1.3rem;
+  columns: 2;
+  column-gap: 2rem;
+}
+.toc li { margin-bottom: 0.5rem; break-inside: avoid; }
+.toc a {
+  color: var(--md-cream);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+.toc a:hover { color: var(--md-gold-lt); }
+
+@media (max-width: 560px) {
+  .toc ol { columns: 1; }
+}
+
+/* ---- Sections ---- */
+section { margin-bottom: 3.5rem; scroll-margin-top: 1.5rem; }
+
+.section-eyebrow {
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--md-gold-dk);
+  margin-bottom: 0.4rem;
+}
+
+h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--md-gold-lt);
+  letter-spacing: 0.02em;
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--md-border);
+}
+
+h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--md-gold);
+  letter-spacing: 0.02em;
+  margin: 1.75rem 0 0.85rem;
+}
+
+p { margin: 0 0 1rem; color: var(--md-cream); }
+p.muted { color: var(--md-muted); font-size: 0.9rem; }
+
+strong { color: var(--md-gold-lt); font-weight: 600; }
+
+a { color: var(--md-gold-lt); }
+
+ul, ol { padding-left: 1.4rem; margin: 0 0 1rem; }
+li { margin-bottom: 0.55rem; }
+
+/* ---- Card visual for rules illustrations ---- */
+.card-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
+.mini-card {
+  width: 44px;
+  height: 60px;
+  background: var(--md-panel);
+  border: 2px solid var(--md-border-lt);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--md-gold-lt);
+  flex-shrink: 0;
+}
+.mini-card.king { border-color: var(--md-gold); color: var(--md-gold); }
+.mini-card.empty { color: var(--md-gold-dk); opacity: 0.5; font-size: 1.3rem; }
+
+/* ---- Step list (numbered, for setup flows) ---- */
+.steps { counter-reset: step; list-style: none; padding-left: 0; }
+.steps li {
+  position: relative;
+  padding-left: 2.75rem;
+  margin-bottom: 1.1rem;
+  counter-increment: step;
+}
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: -0.1rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  background: linear-gradient(135deg, var(--md-gold-dk), var(--md-gold));
+  color: var(--md-black);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* ---- Callout boxes ---- */
+.callout {
+  background: var(--md-surface);
+  border-left: 3px solid var(--md-gold-dk);
+  border-radius: 0 var(--md-radius) var(--md-radius) 0;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+}
+.callout.success { border-left-color: var(--md-success); }
+.callout.warn { border-left-color: var(--md-danger); }
+.callout-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--md-gold);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+.callout.success .callout-label { color: var(--md-success); }
+.callout.warn .callout-label { color: var(--md-danger); }
+.callout p:last-child { margin-bottom: 0; }
+
+/* ---- Troubleshooting accordion-style entries (always open, just styled as Q/A) ---- */
+.qa { background: var(--md-surface); border: 1px solid var(--md-border); border-radius: var(--md-radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.qa-q { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--md-gold-lt); margin: 0 0 0.6rem; display: flex; gap: 0.6rem; align-items: baseline; }
+.qa-q .q-mark { color: var(--md-gold-dk); flex-shrink: 0; }
+.qa-a { margin: 0; color: var(--md-cream); font-size: 0.92rem; }
+.qa-a p:last-child { margin-bottom: 0; }
+
+/* ---- Quick reference table ---- */
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+th { font-family: 'Cinzel', serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--md-gold-dk); text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--md-border-lt); }
+td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--md-border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+
+/* ---- Footer ---- */
+footer {
+  text-align: center;
+  padding-top: 2.5rem;
+  margin-top: 3rem;
+  border-top: 1px solid var(--md-border);
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--md-gold-dk);
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="top-ornament">✦</div>
+  <header>
+    <h1>Spite & Malice</h1>
+    <div class="subtitle">Help &amp; Rules Reference</div>
+  </header>
+
+  <a class="back-link" href="./">← Back to the game</a>
+
+  <nav class="toc">
+    <h2>On This Page</h2>
+    <ol>
+      <li><a href="#how-to-play">How to Play</a></li>
+      <li><a href="#king">The King (Wild Card)</a></li>
+      <li><a href="#discard-rules">Discard Pile Rules</a></li>
+      <li><a href="#winning">Winning the Game</a></li>
+      <li><a href="#local-game">Starting a Local Game</a></li>
+      <li><a href="#hosting">Hosting an Online Game</a></li>
+      <li><a href="#joining">Joining an Online Game</a></li>
+      <li><a href="#troubleshooting">Troubleshooting Connections</a></li>
+      <li><a href="#names">Your Player Name</a></li>
+      <li><a href="#reference">Quick Reference</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============================================================ -->
+  <section id="how-to-play">
+    <div class="section-eyebrow">The Basics</div>
+    <h2>How to Play</h2>
+
+    <p>Spite &amp; Malice is a two-player card game of racing to empty your <strong>payoff stack</strong> before your opponent empties theirs. Each player has their own payoff stack, their own hand, and four personal discard piles. Everyone shares four <strong>center piles</strong> in the middle of the table.</p>
+
+    <h3>The goal</h3>
+    <p>Be the first player to play every card from your payoff stack onto the center. The moment your payoff stack hits zero, you win immediately — the game ends right there, even mid-turn.</p>
+
+    <h3>What you have</h3>
+    <ul>
+      <li><strong>Hand (5 cards):</strong> Refilled to 5 at the start of your turn, or instantly if it empties mid-turn. You can play hand cards to the center, or discard one to end your turn.</li>
+      <li><strong>Payoff stack:</strong> Your personal stack of cards (11, 21, or 31 depending on what was chosen at setup). Only the top card is playable, and only onto a center pile — never to a discard pile.</li>
+      <li><strong>Four discard piles:</strong> Personal to you. Each shows its top card and how many cards are stacked beneath. You can play a discard pile's top card to a center pile, but cards can never move between discard piles.</li>
+    </ul>
+
+    <h3>The center piles</h3>
+    <p>Each of the four shared center piles builds up in sequence from <strong>Ace through Queen</strong> (Ace=1 up to Queen=12). A pile starts empty and only accepts an Ace first, then 2, then 3, and so on.</p>
+    <div class="card-row">
+      <div class="mini-card">A</div>
+      <div class="mini-card">2</div>
+      <div class="mini-card">3</div>
+      <div class="mini-card">4</div>
+      <div class="mini-card empty">…</div>
+      <div class="mini-card">Q</div>
+    </div>
+    <p>When a center pile is completed (reaches Queen), it's cleared away and all those cards are shuffled back into the shared draw pile — so the game never runs out of cards, and that pile opens back up empty, ready for a new Ace.</p>
+
+    <h3>Where cards can come from</h3>
+    <p>On your turn, you can play a card to a center pile from any of three places: your <strong>hand</strong>, the top of your <strong>payoff stack</strong>, or the top of any of your <strong>discard piles</strong>. You can chain as many plays as you're able to in a single turn.</p>
+
+    <h3>Ending your turn</h3>
+    <p>Your turn ends when you discard a card from your <strong>hand</strong> onto one of your own discard piles. This is the only way to end your turn voluntarily — and it's mandatory if you have no more legal plays to the center.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="king">
+    <div class="section-eyebrow">Special Rule</div>
+    <h2>The King (Wild Card)</h2>
+    <p>Every King is wild. A King can be played on <strong>any</strong> center pile, and it automatically acts as whatever value that pile needs next.</p>
+    <div class="card-row">
+      <div class="mini-card">4</div>
+      <div class="mini-card king">K</div>
+    </div>
+    <p>For example, if a center pile's top card is a 4, a King played there acts as a 5. If a center pile is empty, a King played there acts as an Ace. The game highlights every valid pile when you select a King, since it's usually playable in more than one place.</p>
+    <div class="callout">
+      <span class="callout-label">Good to know</span>
+      <p>Kings can come from your hand, your payoff stack, or a discard pile, exactly like any other card. The one thing a King <em>can't</em> do is be discarded to end your turn from a discard pile — see the discard rules below.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="discard-rules">
+    <div class="section-eyebrow">Special Rule</div>
+    <h2>Discard Pile Rules</h2>
+    <p>Discard piles are <strong>one-way</strong>. Cards can move out of a discard pile onto a center pile, but they can never move into a discard pile except from your hand.</p>
+
+    <table>
+      <tr><th>Card is selected from…</th><th>Can play to center?</th><th>Can discard (end turn)?</th></tr>
+      <tr><td>Hand</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Payoff stack</td><td>Yes</td><td><strong style="color:var(--md-danger)">No</strong></td></tr>
+      <tr><td>A discard pile</td><td>Yes</td><td><strong style="color:var(--md-danger)">No</strong></td></tr>
+    </table>
+
+    <div class="callout warn">
+      <span class="callout-label">Common mix-up</span>
+      <p>You cannot shuffle a card from one discard pile to another, and you cannot "park" a payoff stack card on a discard pile to save it for later. If you select a payoff or discard pile card, the game will only let you play it to a center pile — your discard piles simply won't respond as a destination while that card is selected.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="winning">
+    <div class="section-eyebrow">Special Rule</div>
+    <h2>Winning the Game</h2>
+    <p>You win the instant you play the <strong>last card from your payoff stack</strong> onto a center pile. The game ends immediately at that moment — it doesn't matter what's in your hand or discard piles, and it doesn't matter whose turn it would have been next.</p>
+    <p class="muted">When your payoff stack is down to its final card, that card glows on screen as a reminder — your next play there could end the game.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="local-game">
+    <div class="section-eyebrow">Setup</div>
+    <h2>Starting a Local Game</h2>
+    <p>Local games run entirely on one device — useful for playing against the computer, or two people sharing one screen.</p>
+    <ol class="steps">
+      <li>On the setup screen, leave <strong>Game Mode</strong> set to <strong>Local</strong>.</li>
+      <li>Choose your payoff stack size — Quick (11), Standard (21), or Long (31).</li>
+      <li>For each player slot, choose <strong>Human</strong> or <strong>AI</strong>.</li>
+      <li>Tap <strong>Start Game</strong>.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="hosting">
+    <div class="section-eyebrow">Setup — Online</div>
+    <h2>Hosting an Online Game</h2>
+    <p>Hosting means your device holds the official game state — think of it as sitting at the head of the table. Online games connect device-to-device; once connected, there's no ongoing server involved in your moves.</p>
+    <ol class="steps">
+      <li>Set <strong>Game Mode</strong> to <strong>Online — Host</strong>.</li>
+      <li>Tap <strong>Create Room</strong>. The game generates a 6-character room code and displays it on screen.</li>
+      <li>Share that code with your opponent however you like — WhatsApp, SMS, or just say it out loud if you're in the same room.</li>
+      <li>Once your opponent enters the code on their device, the game board opens automatically on both screens.</li>
+    </ol>
+    <div class="callout">
+      <span class="callout-label">Room codes expire</span>
+      <p>Each room code is only valid for 10 minutes. If your opponent hasn't joined by then, tap Create Room again to generate a fresh one.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="joining">
+    <div class="section-eyebrow">Setup — Online</div>
+    <h2>Joining an Online Game</h2>
+    <ol class="steps">
+      <li>Open the game at <a href="./">spiteandmalice.pages.dev</a>.</li>
+      <li>Set <strong>Game Mode</strong> to <strong>Online — Join</strong>.</li>
+      <li>Type the 6-character room code your host shared into the box.</li>
+      <li>Tap <strong>Join Game</strong> — the game board opens automatically once the connection is established.</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="troubleshooting">
+    <div class="section-eyebrow">When Things Go Wrong</div>
+    <h2>Troubleshooting Connections</h2>
+
+    <div class="qa">
+      <p class="qa-q"><span class="q-mark">Q.</span> "Room not found" — I'm sure I typed it correctly.</p>
+      <p class="qa-a">Room codes expire after 10 minutes. Ask your host to tap Create Room again to generate a new one, and try to join within a minute or two of receiving it.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q"><span class="q-mark">Q.</span> I entered the code and tapped Join, but nothing happens.</p>
+      <p class="qa-a">Double-check the code — room codes are 6 characters using only letters and numbers, with no ambiguous characters like O/0 or I/1/L. If it looks right, the host's room may have expired — ask them to create a new one.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q"><span class="q-mark">Q.</span> The room code was accepted, but the game never actually starts.</p>
+      <p class="qa-a">This is almost always a network issue rather than a code issue. The two devices need to find a direct path to each other across the internet, and certain networks make that difficult or impossible — particularly some mobile carrier networks, and most corporate, school, or public WiFi networks with strict firewalls. Try switching one or both devices to regular home WiFi or mobile data and attempt the connection again.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q"><span class="q-mark">Q.</span> Can two people on completely different continents play together?</p>
+      <p class="qa-a">Yes — distance itself isn't a problem. The connection works the same way whether you're in the same room or on opposite sides of the world. What matters is the type of network each device is on, not how far apart you are physically.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q"><span class="q-mark">Q.</span> The connection dropped mid-game — can we resume?</p>
+      <p class="qa-a">Not currently — if either player's browser tab closes, refreshes, or loses its connection, the game session ends. Start a fresh game with a new room code. There's no save/resume for online games yet.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="names">
+    <div class="section-eyebrow">Setup</div>
+    <h2>Your Player Name</h2>
+    <p>Enter your name once on the setup screen — it's saved on your device and reused automatically for every future game, local or online. Your opponent will see this name during online games instead of a generic "Opponent" label.</p>
+    <p class="muted">Your name is stored only on your own device's browser storage. It isn't sent anywhere except directly to the person you connect with for a game.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section id="reference">
+    <div class="section-eyebrow">Cheat Sheet</div>
+    <h2>Quick Reference</h2>
+    <table>
+      <tr><th>Rule</th><th>Summary</th></tr>
+      <tr><td>Win condition</td><td>Play the last card from your payoff stack to any center pile</td></tr>
+      <tr><td>Center pile order</td><td>Ace → 2 → 3 → … → Queen, then the pile clears</td></tr>
+      <tr><td>King</td><td>Wild — plays on any center pile as whatever value it needs next</td></tr>
+      <tr><td>Hand size</td><td>5 cards, refilled at start of turn or instantly if emptied mid-turn</td></tr>
+      <tr><td>Discard piles</td><td>One-way — only hand cards can be discarded into them; they can only feed center piles, never each other</td></tr>
+      <tr><td>Card sources for center play</td><td>Hand, payoff stack top, or any discard pile top</td></tr>
+      <tr><td>Ending your turn</td><td>Discard a hand card to any of your discard piles</td></tr>
+    </table>
+  </section>
+
+  <footer>✦ MD Works ✦</footer>
+
+</div>
+
+</body>
+</html>
