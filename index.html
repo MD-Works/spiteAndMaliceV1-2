@@ -1122,6 +1122,15 @@ const G = {
       discardHint = '— click any pile to discard &amp; end turn';
     }
 
+    // Show "Back to Your Cards" button if viewing opponent
+    const backButtonHTML = !isHuman ? `
+      <div style="padding-top: 1rem; border-top: 1px solid var(--md-border); margin-top: 1rem;">
+        <button class="btn btn-secondary" onclick="G.selectPlayerPanel(${this.localSeat()})" style="width:100%;font-size:0.75rem;padding:0.6rem">
+          ← Back to Your Cards
+        </button>
+      </div>
+    ` : '';
+
     const panelHTML = `
       <div class="player-box ${isCurrent?'current':''} ${isWinner?'winner':''}">
         ${isWinner ? `<div class="winner-ribbon">✦ Winner ✦</div>` : ''}
@@ -1146,6 +1155,7 @@ const G = {
             ${p.discards.map((_,i) => this.renderDiscardPile(p.discards[i], i, isHuman)).join('')}
           </div>
         </div>
+        ${backButtonHTML}
       </div>
     `;
 
