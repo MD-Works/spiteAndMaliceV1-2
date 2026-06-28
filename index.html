@@ -111,7 +111,8 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 @media (max-width: 1023px) {
   .opponent-sidebar { display: none; position: fixed; inset: 0; z-index: 150; background: var(--md-dark); border: none; border-radius: 0; padding: 1.5rem; overflow-y: auto; }
   .opponent-sidebar.visible { display: block; }
-  .opponent-sidebar-close { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--md-gold-lt); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+  .sidebar-close { position: fixed; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--md-gold-lt); font-size: 1.8rem; cursor: pointer; padding: 0.5rem; z-index: 151; }
+  .sidebar-close:hover { color: var(--md-gold); }
 }
 .game-header { text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--md-border); }
 .game-title { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 900; color: var(--md-gold-lt); margin: 0; letter-spacing: 0.05em; }
@@ -1011,11 +1012,6 @@ const G = {
     document.getElementById('playerNavBar').classList.add('active');
   },
 
-  selectPlayerPanel(idx) {
-    this.selectedPlayerIdx = idx;
-    this.renderInner();
-  },
-
   renderOpponentSidebar() {
     // Render compact opponent layout in sidebar (payoff + top of each discard)
     // Find the opponent (any player that isn't the local human)
@@ -1033,37 +1029,40 @@ const G = {
     const oppIdx = this.players.indexOf(opp);
 
     const sidebarHTML = `
-      <div class="sidebar-header">Opponent</div>
-      <h3 class="sidebar-player-name">${opp.name}</h3>
-      
-      <div class="sidebar-payoff">
-        <div class="sidebar-payoff-label">Payoff Stack</div>
-        <div class="sidebar-payoff-count">${opp.payoff.length}</div>
-      </div>
+      <div style="position:relative;">
+        <button class="sidebar-close" onclick="G.closeOpponentSidebarMobile()">✕</button>
+        <div class="sidebar-header">Opponent</div>
+        <h3 class="sidebar-player-name">${opp.name}</h3>
+        
+        <div class="sidebar-payoff">
+          <div class="sidebar-payoff-label">Payoff Stack</div>
+          <div class="sidebar-payoff-count">${opp.payoff.length}</div>
+        </div>
 
-      <div class="sidebar-discards">
-        <div class="sidebar-discard-label">Discard Piles</div>
-        ${opp.discards.map((pile, i) => {
-          const topCard = pile.length ? pile[pile.length - 1] : null;
-          return `
-            <div class="sidebar-discard-item">
-              <span class="sidebar-discard-pile-num">Pile ${i+1}</span>
-              <span class="sidebar-discard-top-card ${topCard && topCard.isKing ? 'is-king' : ''}">
-                ${topCard ? topCard.str : '—'}
-              </span>
-            </div>
-          `;
-        }).join('')}
-      </div>
+        <div class="sidebar-discards">
+          <div class="sidebar-discard-label">Discard Piles</div>
+          ${opp.discards.map((pile, i) => {
+            const topCard = pile.length ? pile[pile.length - 1] : null;
+            return `
+              <div class="sidebar-discard-item">
+                <span class="sidebar-discard-pile-num">Pile ${i+1}</span>
+                <span class="sidebar-discard-top-card ${topCard && topCard.isKing ? 'is-king' : ''}">
+                  ${topCard ? topCard.str : '—'}
+                </span>
+              </div>
+            `;
+          }).join('')}
+        </div>
 
-      <div class="sidebar-hand">
-        <div class="sidebar-hand-label">Hand (Hidden)</div>
-        <div class="sidebar-hand-count">${opp.hand ? opp.hand.length : opp.handCount} cards</div>
-      </div>
+        <div class="sidebar-hand">
+          <div class="sidebar-hand-label">Hand (Hidden)</div>
+          <div class="sidebar-hand-count">${opp.hand ? opp.hand.length : opp.handCount} cards</div>
+        </div>
 
-      <button class="btn btn-secondary" onclick="G.selectPlayerPanel(${oppIdx})" style="margin-top:1rem;width:100%;font-size:0.75rem;padding:0.6rem">
-        View Full Layout
-      </button>
+        <button class="btn btn-secondary" onclick="G.selectPlayerPanel(${oppIdx})" style="margin-top:1rem;width:100%;font-size:0.75rem;padding:0.6rem">
+          View Full Layout
+        </button>
+      </div>
     `;
 
     document.getElementById('opponentSidebar').innerHTML = sidebarHTML;
@@ -1071,7 +1070,31 @@ const G = {
 
   selectPlayerPanel(idx) {
     this.selectedPlayerIdx = idx;
-    this.renderInner();
+    // On mobile: if selecting opponent, show sidebar instead of switching main panel
+    const isMobile = window.innerWidth < 1024;
+    const isOpponent = idx !== this.localSeat();
+    
+    if (isMobile && isOpponent) {
+      // Show opponent sidebar on mobile
+      this.showOpponentSidebarMobile(idx);
+    } else {
+      // Desktop or viewing self: show main panel
+      this.renderInner();
+    }
+  },
+
+  showOpponentSidebarMobile(idx) {
+    // On mobile: show sidebar as fullscreen view
+    const sidebar = document.getElementById('opponentSidebar');
+    sidebar.classList.add('visible');
+    // Update sidebar content
+    this.renderOpponentSidebar();
+  },
+
+  closeOpponentSidebarMobile() {
+    // Close sidebar on mobile
+    const sidebar = document.getElementById('opponentSidebar');
+    sidebar.classList.remove('visible');
   },
 
   renderMainPlayerPanel() {
