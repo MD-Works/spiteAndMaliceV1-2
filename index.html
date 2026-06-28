@@ -113,6 +113,28 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .player-box { background: var(--md-surface); border: 1px solid var(--md-border); border-radius: 8px; padding: 1.5rem; position: relative; }
 .player-box.current { border-color: var(--md-gold); box-shadow: inset 0 0 12px rgba(201,148,60,0.08); }
 .player-box.winner { border-color: var(--md-gold-lt); box-shadow: 0 0 30px rgba(232,200,122,0.4), inset 0 0 20px rgba(232,200,122,0.1); }
+
+/* ===== PLAYER NAV BAR — Horizontal Scrolling ===== */
+.player-nav-bar { display: none; overflow-x: auto; overflow-y: hidden; gap: 0.75rem; padding: 0.75rem; background: var(--md-panel); border-top: 1px solid var(--md-border); margin-top: 1.5rem; scroll-behavior: smooth; flex-wrap: nowrap; }
+.player-nav-bar.active { display: flex; }
+.player-nav-item { flex: 0 0 auto; background: var(--md-surface); border: 2px solid var(--md-border-lt); border-radius: 6px; padding: 1rem; cursor: pointer; transition: all 0.2s; min-width: 130px; text-align: center; }
+.player-nav-item:hover { border-color: var(--md-gold-dk); background: rgba(201,148,60,0.08); transform: translateY(-2px); }
+.player-nav-item.active { border-color: var(--md-gold-lt); background: rgba(232,200,122,0.15); box-shadow: 0 0 12px rgba(232,200,122,0.3); }
+.nav-player-name { font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 600; color: var(--md-gold-lt); margin-bottom: 0.6rem; }
+.nav-payoff-info { font-size: 0.75rem; color: var(--md-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+.nav-payoff-count { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 600; color: var(--md-gold); }
+.nav-turn-badge { display: inline-block; font-size: 0.65rem; color: var(--md-gold-lt); background: rgba(232,200,122,0.2); padding: 0.25rem 0.5rem; border-radius: 3px; margin-top: 0.4rem; text-transform: uppercase; }
+
+/* ===== RESPONSIVE LAYOUT ===== */
+@media (max-width: 768px) {
+  .players-section { display: none; }
+  .player-nav-bar.active { display: flex; }
+}
+
+@media (min-width: 769px) {
+  .players-section { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+  .player-nav-bar { display: none !important; }
+}
 .player-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; gap: 1rem; }
 .player-header { display: flex; align-items: center; gap: 0.75rem; }
 .player-icon { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg,var(--md-gold-dk),var(--md-gold)); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--md-black); font-size: 0.85rem; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
@@ -287,6 +309,7 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
       <div class="rules-note">★ King is wild — can be played on ANY center pile, acting as whatever card that pile needs next</div>
     </div>
     <div class="players-section" id="playersSection"></div>
+    <div class="player-nav-bar" id="playerNavBar"></div>
     <div class="controls">
       <button class="btn" onclick="G.clearSel()" id="clearBtn" style="display:none">Clear Selection</button>
       <button class="btn btn-secondary" onclick="S.showSetup()">New Game</button>
@@ -509,6 +532,7 @@ const G = {
   winnerIdx: null,
   sel: null,
   netMode: null, // null = local game, 'host' = authoritative online host, 'join' = thin remote client
+  selectedPlayerIdx: 0, // which player panel to display in main view
 
   // Thin join client setup — no deck, no payoff dealing, nothing rules-
   // related happens here at all. We just clear the board to an empty
@@ -525,6 +549,7 @@ const G = {
     this.gameOver = false;
     this.winnerIdx = null;
     this.sel = null;
+    this.selectedPlayerIdx = this.localSeat(); // Start viewing self (seat 1 on join)
     document.getElementById('refillNotice').classList.remove('show');
     document.getElementById('completeNotice').classList.remove('show');
     document.getElementById('statusMsg').innerHTML = '';
@@ -585,6 +610,7 @@ const G = {
     this.gameOver = false;
     this.winnerIdx = null;
     this.sel = null;
+    this.selectedPlayerIdx = this.localSeat(); // Start viewing local player
 
     for (const p of this.players) p.payoff = all.splice(0, stackSize);
     for (const p of this.players) p.hand = all.splice(0, 5);
@@ -808,8 +834,6 @@ const G = {
     document.getElementById('modalOverlay').classList.add('active');
   },
 
-  closeModal() { document.getElementById('modalOverlay').classList.remove('active'); },
-
   renderDiscardPile(pile, pileIdx, isHuman) {
     const topCard = pile.length ? pile[pile.length-1] : null;
     // A discard pile only becomes a valid "discard & end turn" target when
@@ -914,94 +938,116 @@ const G = {
       ci.innerHTML = validTargets.size > 0 ? `✓ ${validTargets.size} pile${validTargets.size>1?'s':''} highlighted — click one to play` : '✗ No valid center pile — discard to end turn';
     } else { ci.innerHTML = ''; }
 
-    // Render the LOCAL player's panel first (directly under the center
-    // piles) and the opponent's panel second — on the host this is simply
-    // seat 0 then seat 1 as before, but on the join side seat 1 (the
-    // local human) now correctly renders first even though it's index 1
-    // in the underlying players array.
-    // NOTE: this assumes exactly 2 players, matching every mode that
-    // currently exists (local Human/AI is always 2, online is always 2).
-    // If 3-4 player support is added later, this ordering logic needs to
-    // generalize to "local seat first, then the rest in seat order."
-    const seatOrder = [this.localSeat(), 1 - this.localSeat()];
+    // Render nav bar with all players (mini cards)
+    this.renderPlayerNavBar();
 
-    document.getElementById('playersSection').innerHTML = seatOrder.map(idx => {
-      const p = this.players[idx];
-      const isHuman = idx===this.localSeat();
-      const isCurrent = this.cur===idx && !this.gameOver;
-      const isWinner = this.gameOver && this.winnerIdx === idx;
-      const isMatchPoint = p.payoff.length === 1 && !this.gameOver;
-
-      const payoffHTML = p.payoff.length ? `
-        ${p.payoff.length > 2 ? `<div class="stack-card s3"></div>` : ''}
-        ${p.payoff.length > 1 ? `<div class="stack-card s2"></div>` : ''}
-        <div class="stack-card top ${this.sel&&this.sel.src==='payoff'&&isHuman?'selected':''} ${isMatchPoint?'match-point':''} ${p.payoff[p.payoff.length-1].isKing?'is-king':''}"
-          onclick="${isHuman?`G.selectCard('payoff',0)`:''}">
-          ${p.payoff[p.payoff.length-1].str}
-        </div>
-      ` : `<div class="stack-empty-text">${isWinner ? '✦ Cleared' : 'Empty'}</div>`;
-
-      const handHTML = isHuman ? `
-        <div class="hand-section">
-          <div class="section-label">Hand (${p.hand.length}/5)</div>
-          <div class="hand-cards">
-            ${p.hand.map((c,i) => `
-              <div class="hand-card ${this.sel&&this.sel.src==='hand'&&this.sel.idx===i?'selected':''} ${c.isKing?'is-king':''}"
-                onclick="G.selectCard('hand',${i})">${c.str}</div>
-            `).join('')}
-          </div>
-        </div>
-      ` : `
-        <div class="hand-section">
-          <div class="section-label">Hand</div>
-          <div style="color:var(--md-muted);font-size:0.85rem">${p.hand ? p.hand.length : p.handCount} cards (hidden)</div>
-        </div>
-      `;
-
-      let discardHint;
-      if (!isHuman) {
-        discardHint = '— hover to inspect';
-      } else if (!this.sel) {
-        discardHint = '— hover to inspect · click top to select';
-      } else if (this.sel.src === 'payoff') {
-        discardHint = '— payoff cards can\'t be discarded · play to center instead';
-      } else if (this.sel.src === 'discard') {
-        discardHint = '— discard cards can only move to center · not to another pile';
-      } else {
-        discardHint = '— click any pile to discard &amp; end turn';
-      }
-
-      return `
-        <div class="player-box ${isCurrent?'current':''} ${isWinner?'winner':''}">
-          ${isWinner ? `<div class="winner-ribbon">✦ Winner ✦</div>` : ''}
-          <div class="player-top-row">
-            <div class="player-header">
-              <div class="player-icon" onclick="G.showOppModal(${idx})">${p.name[0]}</div>
-              <div class="player-info">
-                <h3>${p.name}</h3>
-                <div class="player-type-badge">${isHuman ? '' : (p.isAI ? 'AI Opponent' : 'Online Opponent')}</div>
-              </div>
-            </div>
-            <div class="payoff-stack">
-              <div class="stack-label">Payoff Stack</div>
-              <div class="stack-visual">${payoffHTML}</div>
-              <div class="stack-count">${p.payoff.length} left</div>
-            </div>
-          </div>
-          ${handHTML}
-          <div class="discard-section">
-            <div class="section-label">Discard Piles ${discardHint}</div>
-            <div class="discard-piles">
-              ${p.discards.map((_,i) => this.renderDiscardPile(p.discards[i], i, isHuman)).join('')}
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
+    // Render main player panel (full view of selected player)
+    this.renderMainPlayerPanel();
 
     document.getElementById('turnIndicator').textContent =
       this.gameOver ? `Game Over — ${this.players[this.winnerIdx].name} Wins` : `${this.players[this.cur].name}'s Turn`;
     document.getElementById('clearBtn').style.display = (this.sel && !this.gameOver) ? 'block' : 'none';
+  },
+
+  renderPlayerNavBar() {
+    // Render all players as mini cards in horizontal scrolling nav bar
+    const navHTML = this.players.map((p, idx) => {
+      const isCurrent = this.cur === idx && !this.gameOver;
+      const isSelected = this.selectedPlayerIdx === idx;
+      return `
+        <div class="player-nav-item ${isSelected ? 'active' : ''}" onclick="G.selectPlayerPanel(${idx})">
+          <div class="nav-player-name">${p.name}</div>
+          <div class="nav-payoff-info">Payoff</div>
+          <div class="nav-payoff-count">${p.payoff.length}</div>
+          ${isCurrent && !this.gameOver ? `<div class="nav-turn-badge">Your Turn</div>` : ''}
+        </div>
+      `;
+    }).join('');
+    document.getElementById('playerNavBar').innerHTML = navHTML;
+    document.getElementById('playerNavBar').classList.add('active');
+  },
+
+  selectPlayerPanel(idx) {
+    this.selectedPlayerIdx = idx;
+    this.renderInner();
+  },
+
+  renderMainPlayerPanel() {
+    // Render full view of selected player (as if looking at their side of the table)
+    const idx = this.selectedPlayerIdx;
+    const p = this.players[idx];
+    const isHuman = idx === this.localSeat();
+    const isCurrent = this.cur === idx && !this.gameOver;
+    const isWinner = this.gameOver && this.winnerIdx === idx;
+    const isMatchPoint = p.payoff.length === 1 && !this.gameOver;
+
+    const payoffHTML = p.payoff.length ? `
+      ${p.payoff.length > 2 ? `<div class="stack-card s3"></div>` : ''}
+      ${p.payoff.length > 1 ? `<div class="stack-card s2"></div>` : ''}
+      <div class="stack-card top ${this.sel&&this.sel.src==='payoff'&&isHuman?'selected':''} ${isMatchPoint?'match-point':''} ${p.payoff[p.payoff.length-1].isKing?'is-king':''}"
+        onclick="${isHuman?`G.selectCard('payoff',0)`:''}">
+        ${p.payoff[p.payoff.length-1].str}
+      </div>
+    ` : `<div class="stack-empty-text">${isWinner ? '✦ Cleared' : 'Empty'}</div>`;
+
+    const handHTML = isHuman ? `
+      <div class="hand-section">
+        <div class="section-label">Hand (${p.hand.length}/5)</div>
+        <div class="hand-cards">
+          ${p.hand.map((c,i) => `
+            <div class="hand-card ${this.sel&&this.sel.src==='hand'&&this.sel.idx===i?'selected':''} ${c.isKing?'is-king':''}"
+              onclick="G.selectCard('hand',${i})">${c.str}</div>
+          `).join('')}
+        </div>
+      </div>
+    ` : `
+      <div class="hand-section">
+        <div class="section-label">Hand</div>
+        <div style="color:var(--md-muted);font-size:0.85rem">${p.hand ? p.hand.length : p.handCount} cards (hidden)</div>
+      </div>
+    `;
+
+    let discardHint;
+    if (!isHuman) {
+      discardHint = '— hover to inspect';
+    } else if (!this.sel) {
+      discardHint = '— hover to inspect · click top to select';
+    } else if (this.sel.src === 'payoff') {
+      discardHint = '— payoff cards can\'t be discarded · play to center instead';
+    } else if (this.sel.src === 'discard') {
+      discardHint = '— discard cards can only move to center · not to another pile';
+    } else {
+      discardHint = '— click any pile to discard &amp; end turn';
+    }
+
+    const panelHTML = `
+      <div class="player-box ${isCurrent?'current':''} ${isWinner?'winner':''}">
+        ${isWinner ? `<div class="winner-ribbon">✦ Winner ✦</div>` : ''}
+        <div class="player-top-row">
+          <div class="player-header">
+            <div class="player-icon" onclick="G.showOppModal(${idx})">${p.name[0]}</div>
+            <div class="player-info">
+              <h3>${p.name}</h3>
+              <div class="player-type-badge">${isHuman ? '' : (p.isAI ? 'AI Opponent' : 'Online Opponent')}</div>
+            </div>
+          </div>
+          <div class="payoff-stack">
+            <div class="stack-label">Payoff Stack</div>
+            <div class="stack-visual">${payoffHTML}</div>
+            <div class="stack-count">${p.payoff.length} left</div>
+          </div>
+        </div>
+        ${handHTML}
+        <div class="discard-section">
+          <div class="section-label">Discard Piles ${discardHint}</div>
+          <div class="discard-piles">
+            ${p.discards.map((_,i) => this.renderDiscardPile(p.discards[i], i, isHuman)).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('playersSection').innerHTML = panelHTML;
   }
 };
 
