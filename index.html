@@ -107,44 +107,44 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .sidebar-hand-label { font-size: 0.7rem; color: var(--md-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
 .sidebar-hand-count { font-size: 0.85rem; color: var(--md-muted); }
 
-/* Mobile sidebar toggle */
+.sidebar-close { display: none; }
+
 @media (max-width: 1023px) {
   .opponent-sidebar { display: none; position: fixed; inset: 0; z-index: 150; background: var(--md-dark); border: none; border-radius: 0; padding: 1.5rem; overflow-y: auto; }
   .opponent-sidebar.visible { display: block; }
-  .sidebar-close { position: fixed; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--md-gold-lt); font-size: 1.8rem; cursor: pointer; padding: 0.5rem; z-index: 151; }
+  .sidebar-close { display: block; position: fixed; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--md-gold-lt); font-size: 1.8rem; cursor: pointer; padding: 0.5rem; z-index: 151; }
   .sidebar-close:hover { color: var(--md-gold); }
 }
-.game-header { text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--md-border); }
-.game-title { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 900; color: var(--md-gold-lt); margin: 0; letter-spacing: 0.05em; }
-.turn-indicator { color: var(--md-gold); font-size: 0.9rem; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.game-header { display: flex; align-items: baseline; justify-content: center; gap: 1rem; margin-bottom: 0.75rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--md-border); flex-wrap: wrap; }
+.game-title { font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 900; color: var(--md-gold-lt); letter-spacing: 0.05em; }
+.turn-indicator { color: var(--md-gold); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
 
-.selection-info { background: rgba(201,148,60,0.08); border: 1px solid var(--md-gold-dk); border-radius: 4px; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.9rem; text-align: center; color: var(--md-muted); }
+.selection-info { background: rgba(201,148,60,0.08); border: 1px solid var(--md-gold-dk); border-radius: 4px; padding: 0.5rem 0.75rem; margin-bottom: 0.6rem; font-size: 0.82rem; text-align: center; color: var(--md-muted); min-height: 0; }
 .selection-info.active { border-color: var(--md-gold); color: var(--md-gold-lt); }
 
-.refill-notice { background: rgba(232,200,122,0.1); border: 1px solid var(--md-gold-lt); border-radius: 4px; padding: 0.6rem; margin-bottom: 1rem; font-size: 0.85rem; text-align: center; color: var(--md-gold-lt); display: none; }
+.refill-notice { background: rgba(232,200,122,0.1); border: 1px solid var(--md-gold-lt); border-radius: 4px; padding: 0.4rem 0.75rem; margin-bottom: 0.5rem; font-size: 0.8rem; text-align: center; color: var(--md-gold-lt); display: none; }
 .refill-notice.show { display: block; }
 
-.complete-notice { background: rgba(122,200,232,0.08); border: 1px solid var(--md-gold); border-radius: 4px; padding: 0.6rem; margin-bottom: 1rem; font-size: 0.85rem; text-align: center; color: var(--md-gold); display: none; }
+.complete-notice { background: rgba(122,200,232,0.08); border: 1px solid var(--md-gold); border-radius: 4px; padding: 0.4rem 0.75rem; margin-bottom: 0.5rem; font-size: 0.8rem; text-align: center; color: var(--md-gold); display: none; }
 .complete-notice.show { display: block; }
 
-.center-section { background: var(--md-panel); border: 1px solid var(--md-border); border-radius: 8px; padding: 1.5rem 2rem 2rem; margin-bottom: 2rem; }
-.center-label { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--md-gold-lt); text-align: center; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
-.center-instruction { text-align: center; color: var(--md-muted); font-size: 0.8rem; margin-bottom: 1rem; min-height: 1.2rem; }
-.center-piles { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; }
-.center-pile { background: var(--md-surface); border: 2px solid var(--md-border-lt); border-radius: 6px; padding: 1.5rem 1rem; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: all 0.2s; }
-.center-pile.valid { border-color: var(--md-gold); background: rgba(201,148,60,0.08); }
-.center-pile.valid:hover { background: rgba(201,148,60,0.15); transform: translateY(-2px); }
-.center-pile.valid-king { border-color: var(--md-gold-lt); background: rgba(232,200,122,0.1); box-shadow: 0 0 12px rgba(232,200,122,0.2); }
-.center-pile.valid-king:hover { background: rgba(232,200,122,0.18); transform: translateY(-2px); }
-.pile-card { font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 600; color: var(--md-gold-lt); }
-.pile-card.is-king { color: var(--md-gold); }
-.pile-king-as { font-size: 0.65rem; color: var(--md-gold-dk); margin-top: 0.2rem; letter-spacing: 0.05em; }
-.pile-empty { color: var(--md-gold-dk); opacity: 0.5; font-size: 1.2rem; }
-.pile-progress { font-size: 0.65rem; color: var(--md-muted); margin-top: 0.5rem; letter-spacing: 0.05em; }
-.pile-king-hint { font-size: 0.6rem; color: var(--md-gold-lt); margin-top: 0.3rem; }
+.center-section { margin-bottom: 0.75rem; padding: 0.75rem 0.5rem 0.5rem; }
+.center-label { display: none; }
+.center-instruction { text-align: center; color: var(--md-muted); font-size: 0.75rem; margin-bottom: 0.5rem; min-height: 0; }
+.center-piles { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.center-pile { background: #f5f0e8; border: 2px solid var(--md-border-lt); border-radius: 6px; width: 80px; height: 112px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+.center-pile.valid { border-color: var(--md-gold); box-shadow: 0 0 0 2px var(--md-gold), 0 1px 4px rgba(0,0,0,0.35); }
+.center-pile.valid:hover { transform: translateY(-3px); box-shadow: 0 0 0 2px var(--md-gold), 0 5px 12px rgba(0,0,0,0.4); }
+.center-pile.valid-king { border-color: var(--md-gold-lt); box-shadow: 0 0 0 2px var(--md-gold-lt), 0 0 14px rgba(232,200,122,0.3); }
+.center-pile.valid-king:hover { transform: translateY(-3px); }
+.pile-card { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700; line-height: 1; }
+.pile-suit { font-size: 1rem; display: block; margin-top: 0.1rem; line-height: 1; }
+.pile-king-as { display: none; }
+.pile-empty { color: var(--md-border-lt); font-size: 1.3rem; }
+.pile-progress { font-size: 0.55rem; color: var(--md-muted); margin-top: 0.35rem; letter-spacing: 0.04em; background: rgba(0,0,0,0.06); border-radius: 2px; padding: 0.1rem 0.3rem; }
+.pile-king-hint { font-size: 0.52rem; color: var(--md-gold-dk); margin-top: 0.2rem; }
 
-.players-section { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-.player-box { background: var(--md-surface); border: 1px solid var(--md-border); border-radius: 8px; padding: 1.5rem; position: relative; }
+.players-section { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 0.75rem; }
 .player-box.current { border-color: var(--md-gold); box-shadow: inset 0 0 12px rgba(201,148,60,0.08); }
 .player-box.winner { border-color: var(--md-gold-lt); box-shadow: 0 0 30px rgba(232,200,122,0.4), inset 0 0 20px rgba(232,200,122,0.1); }
 
@@ -166,57 +166,71 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 }
 
 @media (min-width: 769px) {
-  .players-section { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
   .player-nav-bar { display: none !important; }
 }
-.player-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; gap: 1rem; }
+.player-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem; gap: 0.75rem; }
 .player-header { display: flex; align-items: center; gap: 0.75rem; }
-.player-icon { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg,var(--md-gold-dk),var(--md-gold)); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--md-black); font-size: 0.85rem; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
+.player-icon { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,var(--md-gold-dk),var(--md-gold)); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--md-black); font-size: 0.85rem; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
 .player-icon:hover { transform: scale(1.1); }
 .player-info h3 { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--md-gold-lt); margin: 0; text-transform: uppercase; letter-spacing: 0.08em; }
 .player-type-badge { font-size: 0.7rem; color: var(--md-muted); text-transform: uppercase; }
 
 .winner-ribbon { position: absolute; top: -12px; right: 16px; background: linear-gradient(135deg,var(--md-gold-dk),var(--md-gold-lt)); color: var(--md-black); font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 0.9rem; border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
 
-.payoff-stack { flex-shrink: 0; text-align: center; }
-.stack-label { font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--md-gold-dk); margin-bottom: 0.4rem; }
-.stack-visual { position: relative; width: 80px; height: 110px; }
-.stack-card { position: absolute; width: 72px; height: 100px; background: var(--md-panel); border: 2px solid var(--md-border-lt); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--md-gold-lt); font-weight: 600; left: 0; top: 0; }
+.hand-row { display: flex; align-items: flex-end; gap: 1rem; }
+
+.payoff-stack { flex-shrink: 0; text-align: center; background: rgba(201,148,60,0.1); border: 2px solid var(--md-gold-dk); border-radius: 8px; padding: 0.6rem 0.85rem 0.55rem; position: relative; }
+.payoff-stack::before { content: '★ WIN PILE'; position: absolute; top: -0.55rem; left: 50%; transform: translateX(-50%); background: var(--md-surface); padding: 0 0.5rem; font-family: 'Raleway', sans-serif; font-size: 0.52rem; letter-spacing: 0.15em; color: var(--md-gold); font-weight: 700; }
+.stack-label { font-family: 'Raleway', sans-serif; font-size: 0.62rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--md-gold); font-weight: 600; margin-bottom: 0.45rem; margin-top: 0.15rem; }
+.stack-visual { position: relative; width: 88px; height: 120px; }
+.stack-card { position: absolute; width: 80px; height: 112px; background: var(--md-panel); border: 2px solid var(--md-border-lt); border-radius: 4px; display: flex; align-items: center; justify-content: center; left: 0; top: 0; }
 .stack-card.s2 { z-index: 1; transform: translateY(8px) translateX(4px) rotateZ(1.5deg); }
 .stack-card.s3 { z-index: 0; transform: translateY(16px) translateX(8px) rotateZ(3deg); }
-.stack-card.top { z-index: 2; border-color: var(--md-gold); background: rgba(201,148,60,0.12); cursor: pointer; transition: all 0.2s; }
-.stack-card.top:hover { transform: translateY(-4px); background: rgba(201,148,60,0.2); }
-.stack-card.top.selected { border-color: var(--md-gold-lt); box-shadow: 0 0 16px rgba(232,200,122,0.35); background: rgba(232,200,122,0.15); }
-.stack-card.top.is-king { color: var(--md-gold); }
+.stack-card.top { z-index: 2; background: #f5f0e8; border-color: var(--md-gold); cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.35); flex-direction: column; }
+.stack-card.top:hover { transform: translateY(-4px); box-shadow: 0 5px 12px rgba(0,0,0,0.4); }
+.stack-card.top.selected { border-color: var(--md-gold-lt); box-shadow: 0 0 0 2px var(--md-gold-lt), 0 6px 16px rgba(0,0,0,0.45); transform: translateY(-6px); }
 .stack-card.top.match-point { border-color: var(--md-gold-lt); box-shadow: 0 0 20px rgba(232,200,122,0.5); animation: pulse-gold 1.5s ease-in-out infinite; }
 @keyframes pulse-gold { 0%,100% { box-shadow: 0 0 12px rgba(232,200,122,0.4); } 50% { box-shadow: 0 0 24px rgba(232,200,122,0.7); } }
-.stack-count { font-size: 0.7rem; color: var(--md-muted); margin-top: 0.5rem; }
+.stack-count { font-size: 0.72rem; color: var(--md-gold-lt); font-weight: 600; margin-top: 0.5rem; }
 .stack-empty-text { font-size: 0.8rem; color: var(--md-gold-dk); opacity: 0.5; text-align: center; margin-top: 2rem; }
 
-.hand-section { margin-bottom: 1.25rem; }
-.section-label { font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--md-gold-dk); margin-bottom: 0.5rem; }
-.hand-cards { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.hand-card { background: var(--md-panel); border: 2px solid var(--md-border-lt); border-radius: 4px; padding: 0.6rem 0.85rem; cursor: pointer; transition: all 0.2s; font-family: 'Cinzel', serif; font-size: 1rem; color: var(--md-gold-lt); min-width: 46px; text-align: center; font-weight: 600; }
-.hand-card:hover { border-color: var(--md-gold-dk); transform: translateY(-3px); background: rgba(201,148,60,0.08); }
-.hand-card.selected { border-color: var(--md-gold-lt); background: rgba(232,200,122,0.18); box-shadow: 0 0 12px rgba(232,200,122,0.3); transform: translateY(-5px); }
-.hand-card.is-king { border-color: var(--md-gold); position: relative; }
-.hand-card.is-king::after { content: '★'; position: absolute; top: 1px; right: 3px; font-size: 0.55rem; color: var(--md-gold); }
+.hand-section { margin-bottom: 0.6rem; flex: 1; min-width: 0; }
+.section-label { font-family: 'Raleway', sans-serif; font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--md-gold-dk); margin-bottom: 0.3rem; }
+.hand-cards-scroll { overflow-x: auto; padding-bottom: 0.25rem; }
+.hand-cards-scroll::-webkit-scrollbar { height: 3px; }
+.hand-cards-scroll::-webkit-scrollbar-track { background: transparent; }
+.hand-cards-scroll::-webkit-scrollbar-thumb { background: var(--md-border-lt); border-radius: 2px; }
+.hand-cards { display: flex; gap: 0.6rem; padding: 0.25rem; }
+/* Card face styles — off-white background, suit-coloured text */
+.card-rank { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700; line-height: 1; display: block; }
+.card-suit { font-size: 1rem; line-height: 1; display: block; margin-top: 0.1rem; }
+.card-king-badge { display: block; font-family: 'Cinzel', serif; font-size: 0.55rem; font-weight: 700; color: var(--md-gold); margin-top: 0.25rem; letter-spacing: 0.05em; }
+
+.hand-card { background: #f5f0e8; border: 2px solid var(--md-border-lt); border-radius: 4px; width: 80px; height: 112px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+.hand-card:hover { border-color: var(--md-gold-dk); transform: translateY(-4px); box-shadow: 0 5px 12px rgba(0,0,0,0.4); }
+.hand-card.selected { border-color: var(--md-gold); box-shadow: 0 0 0 2px var(--md-gold), 0 6px 16px rgba(0,0,0,0.45); transform: translateY(-6px); }
+.hand-card.is-king { border-color: var(--md-gold); }
+.hand-card.is-king::after { content: '★'; position: absolute; top: 4px; right: 5px; font-size: 0.55rem; color: var(--md-gold); }
 
 .discard-section {}
-.discard-piles { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.6rem; }
+.discard-piles-scroll { overflow-x: auto; padding-bottom: 0.25rem; }
+.discard-piles-scroll::-webkit-scrollbar { height: 3px; }
+.discard-piles-scroll::-webkit-scrollbar-track { background: transparent; }
+.discard-piles-scroll::-webkit-scrollbar-thumb { background: var(--md-border-lt); border-radius: 2px; }
+.discard-piles { display: flex; gap: 0.6rem; padding: 0.5rem 0.25rem 0.25rem; }
 .discard-pile-wrap { position: relative; }
-.discard-pile { background: var(--md-panel); border: 2px solid var(--md-border-lt); border-radius: 4px; padding: 0.6rem; min-height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: all 0.2s; }
+.discard-pile { background: #f5f0e8; border: 2px solid var(--md-border-lt); border-radius: 4px; width: 80px; height: 112px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
 .discard-pile:hover { border-color: var(--md-gold-dk); }
-.discard-pile.selectable { border-color: var(--md-gold); background: rgba(201,148,60,0.08); }
-.discard-pile.selectable:hover { background: rgba(201,148,60,0.15); transform: translateY(-2px); }
-.discard-pile.src-selected { border-color: var(--md-gold-lt); background: rgba(232,200,122,0.15); box-shadow: 0 0 10px rgba(232,200,122,0.25); }
-.d-top-card { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 600; color: var(--md-gold-lt); }
-.d-top-card.is-king { color: var(--md-gold); }
-.d-count { font-size: 0.65rem; color: var(--md-muted); margin-top: 0.2rem; }
-.d-empty { font-size: 0.9rem; color: var(--md-gold-dk); opacity: 0.4; }
+.discard-pile.selectable { border-color: var(--md-gold); box-shadow: 0 0 0 2px var(--md-gold); }
+.discard-pile.selectable:hover { transform: translateY(-2px); }
+.discard-pile.src-selected { border-color: var(--md-gold); box-shadow: 0 0 0 2px var(--md-gold), 0 4px 12px rgba(201,148,60,0.3); }
+.d-top-card { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700; line-height: 1; }
+.d-suit { font-size: 1rem; display: block; margin-top: 0.1rem; }
+.d-count { font-size: 0.58rem; color: var(--md-muted); margin-top: 0.4rem; letter-spacing: 0.05em; background: rgba(0,0,0,0.06); border-radius: 2px; padding: 0.1rem 0.3rem; }
+.d-empty { font-size: 1.1rem; color: var(--md-gold-dk); opacity: 0.4; }
 
-.stack-inspector { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--md-surface); border: 1px solid var(--md-gold-dk); border-radius: 6px; padding: 0.75rem; min-width: 120px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-.discard-pile-wrap:hover .stack-inspector { display: block; }
+.stack-inspector { display: none; position: fixed; background: var(--md-surface); border: 1px solid var(--md-gold-dk); border-radius: 6px; padding: 0.75rem; min-width: 120px; z-index: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.5); pointer-events: none; }
+.stack-inspector.visible { display: block; }
 .inspector-title { font-family: 'Cinzel', serif; font-size: 0.65rem; color: var(--md-gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
 .inspector-card { font-family: 'Cinzel', serif; font-size: 0.9rem; padding: 0.2rem 0; border-bottom: 1px solid var(--md-border); }
 .inspector-card:last-child { border-bottom: none; }
@@ -224,7 +238,7 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .inspector-card.buried { color: var(--md-muted); }
 .inspector-empty { font-size: 0.8rem; color: var(--md-muted); }
 
-.controls { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+.controls { display: flex; gap: 0.75rem; justify-content: center; margin-top: 0.75rem; flex-wrap: wrap; }
 .btn { padding: 0.8rem 1.6rem; background: linear-gradient(135deg,var(--md-gold-dk),var(--md-gold)); color: var(--md-black); border: none; border-radius: 4px; font-family: 'Cinzel', serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s; }
 .btn:hover:not(:disabled) { opacity: 0.9; }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -241,10 +255,10 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .info-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--md-border); font-size: 0.9rem; flex-wrap: wrap; gap: 0.5rem; }
 .info-label { color: var(--md-muted); }
 .info-value { color: var(--md-gold-lt); font-family: 'Cinzel', serif; }
-.status-message { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; }
-.ornament { text-align: center; color: var(--md-gold-dk); font-size: 1rem; margin: 1rem 0; }
-.reservoir-count { text-align: center; font-size: 0.75rem; color: var(--md-muted); margin-top: 0.5rem; }
-.rules-note { text-align: center; font-size: 0.75rem; color: var(--md-gold-dk); margin-top: 0.3rem; }
+.status-message { text-align: center; margin-top: 0.5rem; font-size: 0.85rem; }
+.ornament { text-align: center; color: var(--md-gold-dk); font-size: 0.9rem; margin: 0.4rem 0; }
+.reservoir-count { text-align: center; font-size: 0.65rem; color: var(--md-muted); margin-top: 0.3rem; }
+.rules-note { display: none; }
 
 .win-overlay { display: none; position: fixed; inset: 0; background: rgba(10,9,6,0.92); z-index: 500; align-items: center; justify-content: center; }
 .win-overlay.show { display: flex; }
@@ -256,8 +270,6 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .win-detail strong { color: var(--md-gold-lt); }
 
 @media (max-width: 1000px) {
-  .players-section { grid-template-columns: 1fr; }
-  .center-piles { grid-template-columns: repeat(2,1fr); }
   .win-card { padding: 2rem 1.5rem; }
 }
 </style>
@@ -369,6 +381,8 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
   </div>
 </div>
 
+<div class="stack-inspector" id="pileInspector"></div>
+
 <div class="win-overlay" id="winOverlay">
   <div class="win-card">
     <div class="win-ornament">✦ ✦ ✦</div>
@@ -400,6 +414,28 @@ function makeDeck() {
 
 function makePlayer(name, isAI) {
   return {name, isAI, hand:[], discards:[[],[],[],[]], payoff:[]};
+}
+
+// Returns HTML for a card's face — rank in one span, suit in another,
+// each coloured correctly. Red suits (♥♦) get a deep red; black suits
+// (♠♣) get near-black; Kings get a gold tint since they're wild.
+// The outer element's background should be off-white (set via CSS).
+function cardHTML(card) {
+  if (!card) return '—';
+  const isRed = card.s === '♥' || card.s === '♦';
+  const col = card.isKing ? '#8a6020' : isRed ? '#b91c1c' : '#1a1610';
+  return `<span class="card-rank" style="color:${col}">${card.r}</span><span class="card-suit" style="color:${col}">${card.s}</span>`;
+}
+
+// For a King already placed on a center pile — show the value it's acting
+// as (e.g. "5♠") prominently, with a small gold "K" badge so players can
+// still see it's a wild card covering that slot.
+function cardHTMLKingAs(card) {
+  const isRed = card.s === '♥' || card.s === '♦';
+  const col = isRed ? '#b91c1c' : '#1a1610';
+  const RANKS_MAP = {1:'A',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'10',11:'J',12:'Q'};
+  const rank = RANKS_MAP[card.actingAs] || card.actingAs;
+  return `<span class="card-rank" style="color:${col}">${rank}</span><span class="card-suit" style="color:${col}">${card.s}</span><span class="card-king-badge">K</span>`;
 }
 
 // What value does the TOP of a pile currently represent (Kings count as their assigned actingAs)?
@@ -857,7 +893,7 @@ const G = {
       <div class="opp-section">
         <h4>Payoff Stack</h4>
         <div class="info-row"><span class="info-label">Cards Remaining</span><span class="info-value">${opp.payoff.length}</span></div>
-        ${opp.payoff.length ? `<div class="info-row"><span class="info-label">Top Card</span><span class="info-value">${opp.payoff[opp.payoff.length-1].str}</span></div>` : ''}
+        ${opp.payoff.length ? `<div class="info-row"><span class="info-label">Top Card</span><span class="info-value">${cardHTML(opp.payoff[opp.payoff.length-1])}</span></div>` : ''}
       </div>
       <div class="opp-section">
         <h4>Discard Piles</h4>
@@ -876,7 +912,7 @@ const G = {
     document.getElementById('modalOverlay').classList.add('active');
   },
 
-  renderDiscardPile(pile, pileIdx, isHuman) {
+  renderDiscardPile(pile, pileIdx, isHuman, playerIdx) {
     const topCard = pile.length ? pile[pile.length-1] : null;
     // A discard pile only becomes a valid "discard & end turn" target when
     // the current selection is a HAND card. Payoff-stack cards can never be
@@ -886,30 +922,65 @@ const G = {
     const isSelectable = isHuman && selIsDiscardable;
     const isSrcSelected = this.sel && this.sel.src === 'discard' && this.sel.discardIdx === pileIdx && isHuman;
 
-    const inspectorHTML = `
-      <div class="stack-inspector">
-        <div class="inspector-title">Pile ${pileIdx+1} · ${pile.length} card${pile.length!==1?'s':''}</div>
-        ${pile.length === 0
-          ? `<div class="inspector-empty">Empty</div>`
-          : pile.slice().reverse().map((c,i) =>
-              `<div class="inspector-card ${i===0?'top-c':'buried'}">${i===0?'▶ ':'· '}${c.str}</div>`
-            ).join('')
-        }
-      </div>
-    `;
-
+    // The inspector is rendered as a single shared, fixed-position element
+    // (see #pileInspector) positioned via JS on hover, rather than an
+    // absolutely-positioned child here. Discard piles live inside
+    // .discard-piles-scroll, which needs overflow-x:auto to scroll — but
+    // per the CSS overflow spec, giving one axis a non-visible overflow
+    // forces the other axis to auto as well, which was silently clipping
+    // a child tooltip positioned above the pile. Using a fixed-position
+    // element outside that container sidesteps the clipping entirely.
     return `
-      <div class="discard-pile-wrap">
+      <div class="discard-pile-wrap"
+        onmouseenter="G.showPileInspector(this, ${playerIdx}, ${pileIdx})"
+        onmouseleave="G.hidePileInspector()">
         <div class="discard-pile ${isSelectable?'selectable':''} ${isSrcSelected?'src-selected':''}"
           onclick="${isHuman ? (isSelectable ? `G.discardEnd(${pileIdx})` : `G.selectCard('discard',${pileIdx})`) : ''}">
           ${topCard
-            ? `<div class="d-top-card ${topCard.isKing?'is-king':''}">${topCard.str}</div><div class="d-count">${pile.length} card${pile.length!==1?'s':''}</div>`
+            ? `<div class="d-top-card">${cardHTML(topCard)}</div><div class="d-count">${pile.length} card${pile.length!==1?'s':''}</div>`
             : `<div class="d-empty">—</div>`
           }
         </div>
-        ${inspectorHTML}
       </div>
     `;
+  },
+
+  // Builds and positions the shared floating inspector tooltip above the
+  // hovered discard pile. Reads pile data live from this.players so it's
+  // always accurate even if state changed since the last render.
+  showPileInspector(el, playerIdx, pileIdx) {
+    const player = this.players[playerIdx];
+    if (!player) return;
+    const pile = player.discards[pileIdx];
+    const insp = document.getElementById('pileInspector');
+    if (!insp) return;
+
+    insp.innerHTML = `
+      <div class="inspector-title">Pile ${pileIdx+1} · ${pile.length} card${pile.length!==1?'s':''}</div>
+      ${pile.length === 0
+        ? `<div class="inspector-empty">Empty</div>`
+        : pile.slice().reverse().map((c,i) =>
+            `<div class="inspector-card ${i===0?'top-c':'buried'}">${i===0?'▶ ':'· '}${c.str}</div>`
+          ).join('')
+      }
+    `;
+
+    const rect = el.getBoundingClientRect();
+    insp.classList.add('visible');
+    // Measure after the content is in and visible, then place above the
+    // pile, centered, clamped so it never runs off-screen horizontally.
+    const inspRect = insp.getBoundingClientRect();
+    let left = rect.left + rect.width / 2 - inspRect.width / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - inspRect.width - 8));
+    let top = rect.top - inspRect.height - 8;
+    if (top < 8) top = rect.bottom + 8; // flip below if no room above
+    insp.style.left = `${left}px`;
+    insp.style.top = `${top}px`;
+  },
+
+  hidePileInspector() {
+    const insp = document.getElementById('pileInspector');
+    if (insp) insp.classList.remove('visible');
   },
 
   // render() is the single choke point every mutation already calls — by
@@ -946,11 +1017,11 @@ const G = {
       const kingNote = this.sel.card.isKing ? ` (wild — plays on any pile, acting as whatever it needs)` : '';
       let actionHint;
       if (this.sel.src === 'payoff') {
-        actionHint = 'click a highlighted center pile to play it — payoff stack cards cannot be discarded';
+        actionHint = 'cannot be discarded — must be played to a center pile';
       } else if (this.sel.src === 'discard') {
-        actionHint = 'click a highlighted center pile to play it — cards from a discard pile can only move to the center';
+        actionHint = 'can only move to the center, not to another discard pile';
       } else {
-        actionHint = 'click a highlighted center pile to play, or any discard pile to end your turn';
+        actionHint = 'click any discard pile to end your turn instead';
       }
       si.innerHTML = `<strong>${this.sel.card.str}</strong>${kingNote} selected — ${actionHint}`;
     } else {
@@ -965,8 +1036,10 @@ const G = {
       const playInfo = isKingPlay ? validPlays.find(p => p.target === i) : null;
       return `
         <div class="center-pile ${isValid ? (isKingPlay ? 'valid-king' : 'valid') : ''}" onclick="G.playCenter(${i})">
-          ${top ? `<div class="pile-card ${top.isKing?'is-king':''}">${top.str}</div>` : '<div class="pile-empty">—</div>'}
-          ${top && top.isKing ? `<div class="pile-king-as">acting as ${top.actingAs===1?'A':top.actingAs}</div>` : ''}
+          ${top
+            ? `<div class="pile-card">${top.isKing ? cardHTMLKingAs(top) : cardHTML(top)}</div>`
+            : '<div class="pile-empty">—</div>'
+          }
           <div class="pile-progress">${pile.length}/12</div>
           ${isKingPlay ? `<div class="pile-king-hint">★ would act as ${playInfo.actingAs===1?'A':playInfo.actingAs}</div>` : ''}
         </div>
@@ -1046,7 +1119,7 @@ const G = {
             return `
               <div class="sidebar-discard-item">
                 <span class="sidebar-discard-pile-num">Pile ${i+1}</span>
-                <span class="sidebar-discard-top-card ${topCard && topCard.isKing ? 'is-king' : ''}">
+                <span class="sidebar-discard-top-card">
                   ${topCard ? topCard.str : '—'}
                 </span>
               </div>
@@ -1109,26 +1182,42 @@ const G = {
     const payoffHTML = p.payoff.length ? `
       ${p.payoff.length > 2 ? `<div class="stack-card s3"></div>` : ''}
       ${p.payoff.length > 1 ? `<div class="stack-card s2"></div>` : ''}
-      <div class="stack-card top ${this.sel&&this.sel.src==='payoff'&&isHuman?'selected':''} ${isMatchPoint?'match-point':''} ${p.payoff[p.payoff.length-1].isKing?'is-king':''}"
+      <div class="stack-card top ${this.sel&&this.sel.src==='payoff'&&isHuman?'selected':''} ${isMatchPoint?'match-point':''}"
         onclick="${isHuman?`G.selectCard('payoff',0)`:''}">
-        ${p.payoff[p.payoff.length-1].str}
+        ${cardHTML(p.payoff[p.payoff.length-1])}
       </div>
     ` : `<div class="stack-empty-text">${isWinner ? '✦ Cleared' : 'Empty'}</div>`;
 
     const handHTML = isHuman ? `
-      <div class="hand-section">
-        <div class="section-label">Hand (${p.hand.length}/5)</div>
-        <div class="hand-cards">
-          ${p.hand.map((c,i) => `
-            <div class="hand-card ${this.sel&&this.sel.src==='hand'&&this.sel.idx===i?'selected':''} ${c.isKing?'is-king':''}"
-              onclick="G.selectCard('hand',${i})">${c.str}</div>
-          `).join('')}
+      <div class="hand-row">
+        <div class="hand-section">
+          <div class="section-label">Hand (${p.hand.length}/5)</div>
+          <div class="hand-cards-scroll">
+            <div class="hand-cards">
+              ${p.hand.map((c,i) => `
+                <div class="hand-card ${this.sel&&this.sel.src==='hand'&&this.sel.idx===i?'selected':''} ${c.isKing?'is-king':''}"
+                  onclick="G.selectCard('hand',${i})">${cardHTML(c)}</div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="payoff-stack">
+          <div class="stack-label">Payoff Stack</div>
+          <div class="stack-visual">${payoffHTML}</div>
+          <div class="stack-count">${p.payoff.length} left</div>
         </div>
       </div>
     ` : `
-      <div class="hand-section">
-        <div class="section-label">Hand</div>
-        <div style="color:var(--md-muted);font-size:0.85rem">${p.hand ? p.hand.length : p.handCount} cards (hidden)</div>
+      <div class="hand-row">
+        <div class="hand-section">
+          <div class="section-label">Hand</div>
+          <div style="color:var(--md-muted);font-size:0.85rem">${p.hand ? p.hand.length : p.handCount} cards (hidden)</div>
+        </div>
+        <div class="payoff-stack">
+          <div class="stack-label">Payoff Stack</div>
+          <div class="stack-visual">${payoffHTML}</div>
+          <div class="stack-count">${p.payoff.length} left</div>
+        </div>
       </div>
     `;
 
@@ -1165,17 +1254,14 @@ const G = {
               <div class="player-type-badge">${isHuman ? '' : (p.isAI ? 'AI Opponent' : 'Online Opponent')}</div>
             </div>
           </div>
-          <div class="payoff-stack">
-            <div class="stack-label">Payoff Stack</div>
-            <div class="stack-visual">${payoffHTML}</div>
-            <div class="stack-count">${p.payoff.length} left</div>
-          </div>
         </div>
         ${handHTML}
         <div class="discard-section">
           <div class="section-label">Discard Piles ${discardHint}</div>
-          <div class="discard-piles">
-            ${p.discards.map((_,i) => this.renderDiscardPile(p.discards[i], i, isHuman)).join('')}
+          <div class="discard-piles-scroll">
+            <div class="discard-piles">
+              ${p.discards.map((_,i) => this.renderDiscardPile(p.discards[i], i, isHuman, idx)).join('')}
+            </div>
           </div>
         </div>
         ${backButtonHTML}
