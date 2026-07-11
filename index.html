@@ -9,6 +9,8 @@
   --md-panel: #211c14; --md-border: #2c2619; --md-border-lt: #3d3526;
   --md-gold-dk: #7a5815; --md-gold: #c9943c; --md-gold-lt: #e8c87a;
   --md-cream: #f0e6ce; --md-muted: #7a6d58;
+  --felt-dark: #072a1a; --felt: #0e4a2c; --felt-light: #1c6b40;
+  --wood-dark: #2b1810; --wood: #4a2c18; --wood-light: #6b4226;
 }
 * { box-sizing: border-box; }
 body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway', sans-serif; margin: 0; padding: 1rem; }
@@ -79,17 +81,50 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .status-line.error { color: #c94c4c; }
 
 .game-board { display: none; }
-.game-board.active { display: block; }
+.game-board.active { display: block; width: 100vw; position: relative; left: 50%; margin-left: -50vw; }
 
-/* ===== GAME LAYOUT — 3-Column Desktop, Flexible Mobile ===== */
-.game-layout { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
-.main-board { display: flex; flex-direction: column; gap: 1rem; }
-.opponent-sidebar { display: none; background: var(--md-surface); border: 1px solid var(--md-border); border-radius: 8px; padding: 1.25rem; }
+/* ===== GAME LAYOUT ===== */
+/* The whole board is designed at a fixed reference width, then uniformly
+   scaled via JS (see updateBoardScale) to fit whatever viewport it's
+   rendered in — like a game canvas — rather than maintaining separate
+   desktop/tablet/mobile CSS arrangements. */
+.board-scale-outer { width: 100%; overflow: hidden; display: flex; justify-content: center; padding: 0 12px; box-sizing: border-box; }
+.board-scale-inner { width: 1400px; flex-shrink: 0; transform-origin: top center; }
 
-@media (min-width: 1024px) {
-  .game-layout { grid-template-columns: minmax(200px, 280px) 1fr; gap: 1.5rem; }
-  .opponent-sidebar { display: block; }
+.game-layout { display: grid; grid-template-columns: minmax(200px, 280px) 1fr; gap: 1.5rem; align-items: start; }
+.main-board {
+  display: flex; flex-direction: column; gap: 1rem;
+  position: relative;
+  padding: 1.5rem;
+  border: 10px solid var(--wood);
+  border-radius: 18px;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px),
+    radial-gradient(ellipse at 50% -8%, var(--felt-light) 0%, var(--felt) 55%, var(--felt-dark) 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.07),
+    inset 0 -3px 0 rgba(0,0,0,0.35),
+    inset 0 0 70px rgba(0,0,0,0.45),
+    0 8px 24px rgba(0,0,0,0.5);
+  /* Muted text and hairline dividers were tuned for the old dark-brown
+     surface; on green felt they read better a shade lighter/cooler, and
+     since every descendant already reads these two custom properties,
+     re-declaring them here re-themes the whole board for free. */
+  --md-muted: #a9caba;
+  --md-border: rgba(232,200,122,0.22);
 }
+.main-board::before {
+  /* thin brass/gold piping between the wood rail and the felt */
+  content: ''; position: absolute; inset: 6px; border: 1px solid rgba(232,200,122,0.35);
+  border-radius: 11px; pointer-events: none;
+}
+.main-board::after {
+  /* soft vignette for depth — center stays transparent so cards read clearly */
+  content: ''; position: absolute; inset: 0; border-radius: 18px;
+  background: radial-gradient(ellipse at 50% 38%, transparent 45%, rgba(0,0,0,0.32) 100%);
+  pointer-events: none;
+}
+.opponent-sidebar { display: block; background: var(--md-surface); border: 1px solid var(--md-border); border-radius: 8px; padding: 1.25rem; }
 
 .sidebar-header { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--md-gold-lt); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--md-border); }
 .sidebar-player-name { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--md-gold-lt); margin: 0 0 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
@@ -107,50 +142,82 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .sidebar-hand-label { font-size: 0.7rem; color: var(--md-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
 .sidebar-hand-count { font-size: 0.85rem; color: var(--md-muted); }
 
-.sidebar-close { display: none; }
-
-@media (max-width: 1023px) {
-  .opponent-sidebar { display: none; position: fixed; inset: 0; z-index: 150; background: var(--md-dark); border: none; border-radius: 0; padding: 1.5rem; overflow-y: auto; }
-  .opponent-sidebar.visible { display: block; }
-  .sidebar-close { display: block; position: fixed; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--md-gold-lt); font-size: 1.8rem; cursor: pointer; padding: 0.5rem; z-index: 151; }
-  .sidebar-close:hover { color: var(--md-gold); }
-}
 .game-header { display: flex; align-items: baseline; justify-content: center; gap: 1rem; margin-bottom: 0.75rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--md-border); flex-wrap: wrap; }
 .game-title { font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 900; color: var(--md-gold-lt); letter-spacing: 0.05em; }
 .turn-indicator { color: var(--md-gold); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
 
-.selection-info { background: rgba(201,148,60,0.08); border: 1px solid var(--md-gold-dk); border-radius: 4px; padding: 0.5rem 0.75rem; margin-bottom: 0.6rem; font-size: 0.82rem; text-align: center; color: var(--md-muted); min-height: 0; }
+/* Notification zone — fixed height so the board never jumps when messages appear/disappear */
+.notification-zone {
+  position: relative;
+  height: 5rem; /* enough room for the tallest stacked state */
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+.selection-info {
+  background: rgba(201,148,60,0.08);
+  border: 1px solid var(--md-gold-dk);
+  border-radius: 4px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--md-muted);
+}
 .selection-info.active { border-color: var(--md-gold); color: var(--md-gold-lt); }
 
-.refill-notice { background: rgba(232,200,122,0.1); border: 1px solid var(--md-gold-lt); border-radius: 4px; padding: 0.4rem 0.75rem; margin-bottom: 0.5rem; font-size: 0.8rem; text-align: center; color: var(--md-gold-lt); display: none; }
+.refill-notice {
+  background: rgba(232,200,122,0.1);
+  border: 1px solid var(--md-gold-lt);
+  border-radius: 4px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--md-gold-lt);
+  display: none;
+}
 .refill-notice.show { display: block; }
 
-.complete-notice { background: rgba(122,200,232,0.08); border: 1px solid var(--md-gold); border-radius: 4px; padding: 0.4rem 0.75rem; margin-bottom: 0.5rem; font-size: 0.8rem; text-align: center; color: var(--md-gold); display: none; }
+.complete-notice {
+  background: rgba(122,200,232,0.08);
+  border: 1px solid var(--md-gold);
+  border-radius: 4px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--md-gold);
+  display: none;
+}
 .complete-notice.show { display: block; }
 
-.center-section { margin-bottom: 0.75rem; padding: 0.75rem 0.5rem 0.5rem; }
+.center-section { position: relative; margin-bottom: 0.75rem; padding: 0.75rem 0.5rem 0.5rem; }
+.center-section::before {
+  content: '♠'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-size: 7rem; color: rgba(255,255,255,0.035); font-family: 'Cinzel', serif; pointer-events: none;
+}
 .center-label { display: none; }
 .center-instruction { text-align: center; color: var(--md-muted); font-size: 0.75rem; margin-bottom: 0.5rem; min-height: 0; }
 .center-piles { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
-.center-pile { background: #f5f0e8; border: 2px solid var(--md-border-lt); border-radius: 6px; width: 80px; height: 112px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+.center-pile-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.center-pile { background: #f5f0e8; border: 2px solid var(--md-border-lt); border-radius: 6px; width: 80px; height: 112px; cursor: pointer; transition: all 0.2s; flex-shrink: 0; position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
 .center-pile.valid { border-color: var(--md-gold); box-shadow: 0 0 0 2px var(--md-gold), 0 1px 4px rgba(0,0,0,0.35); }
 .center-pile.valid:hover { transform: translateY(-3px); box-shadow: 0 0 0 2px var(--md-gold), 0 5px 12px rgba(0,0,0,0.4); }
 .center-pile.valid-king { border-color: var(--md-gold-lt); box-shadow: 0 0 0 2px var(--md-gold-lt), 0 0 14px rgba(232,200,122,0.3); }
 .center-pile.valid-king:hover { transform: translateY(-3px); }
-.pile-card { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700; line-height: 1; }
-.pile-suit { font-size: 1rem; display: block; margin-top: 0.1rem; line-height: 1; }
-.pile-king-as { display: none; }
-.pile-empty { color: var(--md-border-lt); font-size: 1.3rem; }
-.pile-progress { font-size: 0.55rem; color: var(--md-muted); margin-top: 0.35rem; letter-spacing: 0.04em; background: rgba(0,0,0,0.06); border-radius: 2px; padding: 0.1rem 0.3rem; }
-.pile-king-hint { font-size: 0.52rem; color: var(--md-gold-dk); margin-top: 0.2rem; }
+.pile-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--md-border-lt); font-size: 1.3rem; }
+.pile-progress { font-size: 0.58rem; color: var(--md-muted); margin-top: 0.4rem; letter-spacing: 0.04em; text-align: center; }
+.pile-king-hint { font-size: 0.55rem; color: var(--md-gold-dk); margin-top: 0.2rem; text-align: center; }
 
 .players-section { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 0.75rem; }
+.player-box { background: rgba(26,22,16,0.72); border: 1px solid var(--md-border-lt); border-radius: 8px; padding: 0.85rem 1rem; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
 .player-box.current { border-color: var(--md-gold); box-shadow: inset 0 0 12px rgba(201,148,60,0.08); }
 .player-box.winner { border-color: var(--md-gold-lt); box-shadow: 0 0 30px rgba(232,200,122,0.4), inset 0 0 20px rgba(232,200,122,0.1); }
 
-/* ===== PLAYER NAV BAR — Horizontal Scrolling ===== */
-.player-nav-bar { display: none; overflow-x: auto; overflow-y: hidden; gap: 0.75rem; padding: 0.75rem; background: var(--md-panel); border-top: 1px solid var(--md-border); margin-top: 1.5rem; scroll-behavior: smooth; flex-wrap: nowrap; }
-.player-nav-bar.active { display: flex; }
+/* ===== PLAYER NAV BAR — unused now that the board scales as a unit; kept in DOM/markup harmlessly, hidden permanently ===== */
+.player-nav-bar { display: none !important; overflow-x: auto; overflow-y: hidden; gap: 0.75rem; padding: 0.75rem; background: var(--md-panel); border-top: 1px solid var(--md-border); margin-top: 1.5rem; scroll-behavior: smooth; flex-wrap: nowrap; }
 .player-nav-item { flex: 0 0 auto; background: var(--md-surface); border: 2px solid var(--md-border-lt); border-radius: 6px; padding: 1rem; cursor: pointer; transition: all 0.2s; min-width: 130px; text-align: center; }
 .player-nav-item:hover { border-color: var(--md-gold-dk); background: rgba(201,148,60,0.08); transform: translateY(-2px); }
 .player-nav-item.active { border-color: var(--md-gold-lt); background: rgba(232,200,122,0.15); box-shadow: 0 0 12px rgba(232,200,122,0.3); }
@@ -159,15 +226,6 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .nav-payoff-count { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 600; color: var(--md-gold); }
 .nav-turn-badge { display: inline-block; font-size: 0.65rem; color: var(--md-gold-lt); background: rgba(232,200,122,0.2); padding: 0.25rem 0.5rem; border-radius: 3px; margin-top: 0.4rem; text-transform: uppercase; }
 
-/* ===== RESPONSIVE LAYOUT ===== */
-@media (max-width: 768px) {
-  .players-section { display: none; }
-  .player-nav-bar.active { display: flex; }
-}
-
-@media (min-width: 769px) {
-  .player-nav-bar { display: none !important; }
-}
 .player-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem; gap: 0.75rem; }
 .player-header { display: flex; align-items: center; gap: 0.75rem; }
 .player-icon { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,var(--md-gold-dk),var(--md-gold)); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--md-black); font-size: 0.85rem; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
@@ -202,9 +260,17 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .hand-cards-scroll::-webkit-scrollbar-thumb { background: var(--md-border-lt); border-radius: 2px; }
 .hand-cards { display: flex; gap: 0.6rem; padding: 0.25rem; }
 /* Card face styles — off-white background, suit-coloured text */
-.card-rank { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700; line-height: 1; display: block; }
-.card-suit { font-size: 1rem; line-height: 1; display: block; margin-top: 0.1rem; }
-.card-king-badge { display: block; font-family: 'Cinzel', serif; font-size: 0.55rem; font-weight: 700; color: var(--md-gold); margin-top: 0.25rem; letter-spacing: 0.05em; }
+.card-face { position: absolute; inset: 0; }
+.card-corner { position: absolute; display: flex; flex-direction: column; align-items: center; line-height: 1.05; font-family: 'Cinzel', serif; font-weight: 900; font-size: 1rem; }
+.card-corner.tl { top: 4px; left: 5px; }
+.card-corner.br { bottom: 4px; right: 5px; transform: rotate(180deg); }
+.ci-suit { font-size: 0.8rem; margin-top: 2px; }
+.card-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.card-pip { position: absolute; font-size: 1rem; line-height: 1; }
+.card-ace-symbol { font-size: 2.6rem; line-height: 1; }
+.court-icon { position: absolute; top: 20%; width: 55%; left: 22.5%; }
+.court-suit { position: absolute; top: 56%; width: 100%; text-align: center; font-size: 1.5rem; line-height: 1; }
+.card-king-badge { position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.05em; color: var(--md-gold); background: rgba(255,255,255,0.55); padding: 0 3px; border-radius: 2px; }
 
 .hand-card { background: #f5f0e8; border: 2px solid var(--md-border-lt); border-radius: 4px; width: 80px; height: 112px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
 .hand-card:hover { border-color: var(--md-gold-dk); transform: translateY(-4px); box-shadow: 0 5px 12px rgba(0,0,0,0.4); }
@@ -219,15 +285,13 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
 .discard-piles-scroll::-webkit-scrollbar-thumb { background: var(--md-border-lt); border-radius: 2px; }
 .discard-piles { display: flex; gap: 0.6rem; padding: 0.5rem 0.25rem 0.25rem; }
 .discard-pile-wrap { position: relative; }
-.discard-pile { background: #f5f0e8; border: 2px solid var(--md-border-lt); border-radius: 4px; width: 80px; height: 112px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+.discard-pile { background: #f5f0e8; border: 2px solid var(--md-border-lt); border-radius: 4px; width: 80px; height: 112px; cursor: pointer; transition: all 0.2s; flex-shrink: 0; position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
 .discard-pile:hover { border-color: var(--md-gold-dk); }
 .discard-pile.selectable { border-color: var(--md-gold); box-shadow: 0 0 0 2px var(--md-gold); }
 .discard-pile.selectable:hover { transform: translateY(-2px); }
 .discard-pile.src-selected { border-color: var(--md-gold); box-shadow: 0 0 0 2px var(--md-gold), 0 4px 12px rgba(201,148,60,0.3); }
-.d-top-card { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700; line-height: 1; }
-.d-suit { font-size: 1rem; display: block; margin-top: 0.1rem; }
-.d-count { font-size: 0.58rem; color: var(--md-muted); margin-top: 0.4rem; letter-spacing: 0.05em; background: rgba(0,0,0,0.06); border-radius: 2px; padding: 0.1rem 0.3rem; }
-.d-empty { font-size: 1.1rem; color: var(--md-gold-dk); opacity: 0.4; }
+.d-count { font-size: 0.62rem; color: var(--md-muted); margin-top: 0.4rem; letter-spacing: 0.05em; text-align: center; }
+.d-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--md-gold-dk); opacity: 0.4; }
 
 .stack-inspector { display: none; position: fixed; background: var(--md-surface); border: 1px solid var(--md-gold-dk); border-radius: 6px; padding: 0.75rem; min-width: 120px; z-index: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.5); pointer-events: none; }
 .stack-inspector.visible { display: block; }
@@ -340,34 +404,40 @@ body { background: var(--md-dark); color: var(--md-cream); font-family: 'Raleway
   </div>
 
   <div class="game-board" id="gameBoard">
-    <div class="game-layout">
-      <!-- Opponent Sidebar (left on desktop, expandable on mobile) -->
-      <div class="opponent-sidebar" id="opponentSidebar"></div>
+    <div class="board-scale-outer" id="boardScaleOuter">
+      <div class="board-scale-inner" id="boardScaleInner">
+        <div class="game-layout">
+          <!-- Opponent Sidebar -->
+          <div class="opponent-sidebar" id="opponentSidebar"></div>
 
-      <!-- Main Game Board -->
-      <div class="main-board">
-        <div class="game-header">
-          <div class="game-title">Spite & Malice</div>
-          <div class="turn-indicator" id="turnIndicator"></div>
+          <!-- Main Game Board -->
+          <div class="main-board">
+            <div class="game-header">
+              <div class="game-title">Spite & Malice</div>
+              <div class="turn-indicator" id="turnIndicator"></div>
+            </div>
+            <div class="center-section">
+              <div class="center-label">Center Piles</div>
+              <div class="center-instruction" id="centerInstr"></div>
+              <div class="center-piles" id="centerPiles"></div>
+              <div class="reservoir-count" id="reservoirCount"></div>
+              <div class="rules-note">★ King is wild — can be played on ANY center pile, acting as whatever card that pile needs next</div>
+            </div>
+            <div class="players-section" id="playersSection"></div>
+            <div class="player-nav-bar" id="playerNavBar"></div>
+            <div class="notification-zone">
+              <div class="selection-info" id="selInfo">Select a card to play</div>
+              <div class="refill-notice" id="refillNotice">✦ Hand emptied mid-turn — 5 new cards dealt! Keep playing.</div>
+              <div class="complete-notice" id="completeNotice">♦ Pile completed (A→Q) — cards reshuffled into the reservoir!</div>
+            </div>
+            <div class="controls">
+              <button class="btn" onclick="G.clearSel()" id="clearBtn" style="display:none">Clear Selection</button>
+              <button class="btn btn-secondary" onclick="S.showSetup()">New Game</button>
+            </div>
+            <div class="status-message" id="statusMsg"></div>
+            <div class="ornament">✦</div>
+          </div>
         </div>
-        <div class="refill-notice" id="refillNotice">✦ Hand emptied mid-turn — 5 new cards dealt! Keep playing.</div>
-        <div class="complete-notice" id="completeNotice">♦ Pile completed (A→Q) — cards reshuffled into the reservoir!</div>
-        <div class="selection-info" id="selInfo">Select a card to play</div>
-        <div class="center-section">
-          <div class="center-label">Center Piles</div>
-          <div class="center-instruction" id="centerInstr"></div>
-          <div class="center-piles" id="centerPiles"></div>
-          <div class="reservoir-count" id="reservoirCount"></div>
-          <div class="rules-note">★ King is wild — can be played on ANY center pile, acting as whatever card that pile needs next</div>
-        </div>
-        <div class="players-section" id="playersSection"></div>
-        <div class="player-nav-bar" id="playerNavBar"></div>
-        <div class="controls">
-          <button class="btn" onclick="G.clearSel()" id="clearBtn" style="display:none">Clear Selection</button>
-          <button class="btn btn-secondary" onclick="S.showSetup()">New Game</button>
-        </div>
-        <div class="status-message" id="statusMsg"></div>
-        <div class="ornament">✦</div>
       </div>
     </div>
   </div>
@@ -416,26 +486,96 @@ function makePlayer(name, isAI) {
   return {name, isAI, hand:[], discards:[[],[],[],[]], payoff:[]};
 }
 
-// Returns HTML for a card's face — rank in one span, suit in another,
-// each coloured correctly. Red suits (♥♦) get a deep red; black suits
-// (♠♣) get near-black; Kings get a gold tint since they're wild.
-// The outer element's background should be off-white (set via CSS).
+// Returns HTML for a card's face — a real playing-card layout with corner
+// rank/suit indices, plus a center treatment that depends on rank: a pip
+// grid for 2–10, an original (non-copyrighted) court-card icon for J/Q/K,
+// or one large suit glyph for Aces. Red suits (♥♦) get a deep red;
+// black suits (♠♣) get near-black; Kings get a gold tint since they're wild.
 function cardHTML(card) {
   if (!card) return '—';
   const isRed = card.s === '♥' || card.s === '♦';
-  const col = card.isKing ? '#8a6020' : isRed ? '#b91c1c' : '#1a1610';
-  return `<span class="card-rank" style="color:${col}">${card.r}</span><span class="card-suit" style="color:${col}">${card.s}</span>`;
+  const col = card.isKing ? '#8a6020' : isRed ? '#c00' : '#111';
+  const cornerHTML = `<span class="ci-rank">${card.r}</span><span class="ci-suit">${card.s}</span>`;
+
+  let center;
+  if (card.r === 'A') {
+    center = `<div class="card-ace-symbol" style="color:${col}">${card.s}</div>`;
+  } else if (card.r === 'J' || card.r === 'Q' || card.r === 'K') {
+    center = generateCourtIcon(card.r, card.s, col);
+  } else {
+    center = generatePipsHTML(card, col);
+  }
+
+  return `
+    <div class="card-face">
+      <div class="card-corner tl" style="color:${col}">${cornerHTML}</div>
+      <div class="card-center">${center}</div>
+      <div class="card-corner br" style="color:${col}">${cornerHTML}</div>
+    </div>
+  `;
+}
+
+// Classic French-suited pip positions (as % of the card's inner area) for
+// ranks 2–10. rot:180 flips lower pips to point "down" the card, same as
+// real cards, so the layout reads correctly no matter which end faces you.
+const PIP_LAYOUTS = {
+  2:  [{x:50,y:20,r:0},  {x:50,y:80,r:180}],
+  3:  [{x:50,y:18,r:0},  {x:50,y:50,r:0},   {x:50,y:82,r:180}],
+  4:  [{x:30,y:20,r:0},  {x:70,y:20,r:0},   {x:30,y:80,r:180}, {x:70,y:80,r:180}],
+  5:  [{x:30,y:20,r:0},  {x:70,y:20,r:0},   {x:50,y:50,r:0},
+       {x:30,y:80,r:180},{x:70,y:80,r:180}],
+  6:  [{x:30,y:18,r:0},  {x:70,y:18,r:0},   {x:30,y:50,r:0},  {x:70,y:50,r:0},
+       {x:30,y:82,r:180},{x:70,y:82,r:180}],
+  7:  [{x:30,y:15,r:0},  {x:70,y:15,r:0},   {x:50,y:32,r:0},
+       {x:30,y:50,r:0},  {x:70,y:50,r:0},
+       {x:30,y:85,r:180},{x:70,y:85,r:180}],
+  8:  [{x:30,y:13,r:0},  {x:70,y:13,r:0},   {x:50,y:28,r:0},
+       {x:30,y:44,r:0},  {x:70,y:44,r:0},
+       {x:50,y:72,r:180},{x:30,y:87,r:180}, {x:70,y:87,r:180}],
+  9:  [{x:30,y:12,r:0},  {x:70,y:12,r:0},   {x:30,y:35,r:0},  {x:70,y:35,r:0},
+       {x:50,y:50,r:0},
+       {x:30,y:65,r:180},{x:70,y:65,r:180}, {x:30,y:88,r:180}, {x:70,y:88,r:180}],
+  10: [{x:30,y:10,r:0},  {x:70,y:10,r:0},   {x:50,y:22,r:0},
+       {x:30,y:34,r:0},  {x:70,y:34,r:0},
+       {x:30,y:66,r:180},{x:70,y:66,r:180},
+       {x:50,y:78,r:180},{x:30,y:90,r:180}, {x:70,y:90,r:180}],
+};
+
+function generatePipsHTML(card, colorHex) {
+  const layout = PIP_LAYOUTS[card.v] || [];
+  return layout.map(p =>
+    `<span class="card-pip" style="left:${p.x}%;top:${p.y}%;color:${colorHex};transform:translate(-50%,-50%) rotate(${p.r}deg)">${card.s}</span>`
+  ).join('');
+}
+
+// Small original line-art emblems for face cards — deliberately simple
+// shapes (crown / fleur / collar) rather than any copyrighted card design,
+// sized to sit above the suit glyph inside the card's center area.
+function generateCourtIcon(rank, suitChar, colorHex) {
+  const art = {
+    K: `<path d="M5 26 L11 11 L17 21 L21 8 L25 21 L31 11 L37 26 Z" fill="none" stroke="${colorHex}" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="11" cy="11" r="2.8" fill="${colorHex}"/><circle cx="21" cy="8" r="2.8" fill="${colorHex}"/><circle cx="31" cy="11" r="2.8" fill="${colorHex}"/>
+        <line x1="5" y1="26" x2="37" y2="26" stroke="${colorHex}" stroke-width="2.5"/>`,
+    Q: `<path d="M6 24 Q11 9 15 20 Q21 6 27 20 Q31 9 36 24" fill="none" stroke="${colorHex}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="21" cy="6" r="2.8" fill="${colorHex}"/>
+        <line x1="6" y1="24" x2="36" y2="24" stroke="${colorHex}" stroke-width="2.5"/>`,
+    J:  `<path d="M12 8 L30 8 M16 8 L16 22 Q16 28 21 28 Q26 28 26 22 L26 8" fill="none" stroke="${colorHex}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`,
+  };
+  return `
+    <svg class="court-icon" viewBox="0 0 42 30" xmlns="http://www.w3.org/2000/svg">${art[rank]}</svg>
+    <div class="court-suit" style="color:${colorHex}">${suitChar}</div>
+  `;
 }
 
 // For a King already placed on a center pile — show the value it's acting
-// as (e.g. "5♠") prominently, with a small gold "K" badge so players can
-// still see it's a wild card covering that slot.
+// as (e.g. "5♠") using the same full card-face rendering as any other
+// card, with a small gold "K WILD" badge so players can still see it's
+// actually a wild King covering that slot.
 function cardHTMLKingAs(card) {
-  const isRed = card.s === '♥' || card.s === '♦';
-  const col = isRed ? '#b91c1c' : '#1a1610';
   const RANKS_MAP = {1:'A',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'10',11:'J',12:'Q'};
   const rank = RANKS_MAP[card.actingAs] || card.actingAs;
-  return `<span class="card-rank" style="color:${col}">${rank}</span><span class="card-suit" style="color:${col}">${card.s}</span><span class="card-king-badge">K</span>`;
+  const fakeCard = { r: rank, s: card.s, v: card.actingAs, isKing: false };
+  return `${cardHTML(fakeCard)}<div class="card-king-badge">★ K</div>`;
 }
 
 // What value does the TOP of a pile currently represent (Kings count as their assigned actingAs)?
@@ -568,6 +708,7 @@ const S = {
     G.init(cfgs, this.stackSize);
     document.getElementById('setupScreen').style.display = 'none';
     document.getElementById('gameBoard').classList.add('active');
+    updateBoardScale();
   },
 
   // Called by Net once a host/join connection is live AND both sides'
@@ -592,6 +733,7 @@ const S = {
       G.netMode = 'join';
       G.initJoinView(myName, oppName);
     }
+    updateBoardScale();
   },
 
   showSetup() {
@@ -601,7 +743,42 @@ const S = {
   }
 };
 
+// ===== BOARD SCALING =====
+// The board is built at a fixed reference width (matching .board-scale-inner's
+// CSS width) so every existing px-based card/gap size behaves exactly like
+// the original desktop design. Rather than maintaining separate CSS layouts
+// per breakpoint, we measure the board's natural, unscaled size and apply a
+// single uniform `transform: scale()` so the whole thing grows or shrinks
+// together to fit whatever viewport it's actually shown in — the same
+// technique used to fit a fixed-resolution game canvas into any window.
+const BOARD_REF_WIDTH = 1400;
+const BOARD_MAX_SCALE = 1.5;
+
+function updateBoardScale() {
+  const outer = document.getElementById('boardScaleOuter');
+  const inner = document.getElementById('boardScaleInner');
+  if (!outer || !inner) return;
+  if (outer.offsetParent === null) return; // board isn't shown yet (still on setup screen)
+
+  // Reset transform before measuring, so scrollHeight reflects the true
+  // unscaled content height rather than a previously-applied scale.
+  inner.style.transform = 'none';
+  const naturalHeight = inner.scrollHeight;
+  const availW = outer.clientWidth;
+  const topOffset = outer.getBoundingClientRect().top;
+  const availH = Math.max(300, window.innerHeight - topOffset - 16);
+
+  const scale = Math.min(availW / BOARD_REF_WIDTH, availH / naturalHeight, BOARD_MAX_SCALE);
+  inner.style.transform = `scale(${scale})`;
+  // The transform doesn't shrink the box's layout size, so we explicitly
+  // set outer's height to the scaled height — otherwise the page would
+  // still reserve the full unscaled height below the visually-shrunk board.
+  outer.style.height = `${naturalHeight * scale}px`;
+}
+window.addEventListener('resize', updateBoardScale);
+
 const G = {
+
   players: [],
   cur: 0,
   center: [[], [], [], []],
@@ -893,7 +1070,7 @@ const G = {
       <div class="opp-section">
         <h4>Payoff Stack</h4>
         <div class="info-row"><span class="info-label">Cards Remaining</span><span class="info-value">${opp.payoff.length}</span></div>
-        ${opp.payoff.length ? `<div class="info-row"><span class="info-label">Top Card</span><span class="info-value">${cardHTML(opp.payoff[opp.payoff.length-1])}</span></div>` : ''}
+        ${opp.payoff.length ? `<div class="info-row"><span class="info-label">Top Card</span><span class="info-value">${opp.payoff[opp.payoff.length-1].str}</span></div>` : ''}
       </div>
       <div class="opp-section">
         <h4>Discard Piles</h4>
@@ -936,11 +1113,9 @@ const G = {
         onmouseleave="G.hidePileInspector()">
         <div class="discard-pile ${isSelectable?'selectable':''} ${isSrcSelected?'src-selected':''}"
           onclick="${isHuman ? (isSelectable ? `G.discardEnd(${pileIdx})` : `G.selectCard('discard',${pileIdx})`) : ''}">
-          ${topCard
-            ? `<div class="d-top-card">${cardHTML(topCard)}</div><div class="d-count">${pile.length} card${pile.length!==1?'s':''}</div>`
-            : `<div class="d-empty">—</div>`
-          }
+          ${topCard ? cardHTML(topCard) : `<div class="d-empty">—</div>`}
         </div>
+        <div class="d-count">${topCard ? `${pile.length} card${pile.length!==1?'s':''}` : ''}</div>
       </div>
     `;
   },
@@ -1035,11 +1210,13 @@ const G = {
       const isKingPlay = isValid && selCard && selCard.isKing;
       const playInfo = isKingPlay ? validPlays.find(p => p.target === i) : null;
       return `
-        <div class="center-pile ${isValid ? (isKingPlay ? 'valid-king' : 'valid') : ''}" onclick="G.playCenter(${i})">
-          ${top
-            ? `<div class="pile-card">${top.isKing ? cardHTMLKingAs(top) : cardHTML(top)}</div>`
-            : '<div class="pile-empty">—</div>'
-          }
+        <div class="center-pile-wrap">
+          <div class="center-pile ${isValid ? (isKingPlay ? 'valid-king' : 'valid') : ''}" onclick="G.playCenter(${i})">
+            ${top
+              ? (top.isKing ? cardHTMLKingAs(top) : cardHTML(top))
+              : '<div class="pile-empty">—</div>'
+            }
+          </div>
           <div class="pile-progress">${pile.length}/12</div>
           ${isKingPlay ? `<div class="pile-king-hint">★ would act as ${playInfo.actingAs===1?'A':playInfo.actingAs}</div>` : ''}
         </div>
@@ -1065,6 +1242,7 @@ const G = {
     document.getElementById('turnIndicator').textContent =
       this.gameOver ? `Game Over — ${this.players[this.winnerIdx].name} Wins` : `${this.players[this.cur].name}'s Turn`;
     document.getElementById('clearBtn').style.display = (this.sel && !this.gameOver) ? 'block' : 'none';
+    updateBoardScale();
   },
 
   renderPlayerNavBar() {
@@ -1103,7 +1281,6 @@ const G = {
 
     const sidebarHTML = `
       <div style="position:relative;">
-        <button class="sidebar-close" onclick="G.closeOpponentSidebarMobile()">✕</button>
         <div class="sidebar-header">Opponent</div>
         <h3 class="sidebar-player-name">${opp.name}</h3>
         
@@ -1143,31 +1320,7 @@ const G = {
 
   selectPlayerPanel(idx) {
     this.selectedPlayerIdx = idx;
-    // On mobile: if selecting opponent, show sidebar instead of switching main panel
-    const isMobile = window.innerWidth < 1024;
-    const isOpponent = idx !== this.localSeat();
-    
-    if (isMobile && isOpponent) {
-      // Show opponent sidebar on mobile
-      this.showOpponentSidebarMobile(idx);
-    } else {
-      // Desktop or viewing self: show main panel
-      this.renderInner();
-    }
-  },
-
-  showOpponentSidebarMobile(idx) {
-    // On mobile: show sidebar as fullscreen view
-    const sidebar = document.getElementById('opponentSidebar');
-    sidebar.classList.add('visible');
-    // Update sidebar content
-    this.renderOpponentSidebar();
-  },
-
-  closeOpponentSidebarMobile() {
-    // Close sidebar on mobile
-    const sidebar = document.getElementById('opponentSidebar');
-    sidebar.classList.remove('visible');
+    this.renderInner();
   },
 
   renderMainPlayerPanel() {
